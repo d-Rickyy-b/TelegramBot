@@ -22,9 +22,7 @@ class game_handler(object):
 
     def gl_remove(self, chat_id):
         if not self.getIndexByChatID(chat_id) == -1:
-            print("Game removed: " + str(chat_id))
             self.GameList.pop(self.getIndexByChatID(chat_id))
 
     def __init__(self, game_id=1):
         self.game_id = game_id
-
