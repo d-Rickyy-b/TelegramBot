@@ -94,10 +94,7 @@ class main(object):
                     last_name = self.unAnsweredMessages[0][3]
                     username = self.unAnsweredMessages[0][3]
                     index = self.getIndexByChatID(chat_id)      # getIndexByChatID -> checkt ob Spiel im Chat vorhanden
-                    if len(check_if_user_saved(user_id)[2])>0:
-                        lang_id = str(check_if_user_saved(user_id)[2])
-                    else:
-                        lang_id = "en"
+                    lang_id = str(check_if_user_saved(user_id)[2])
                     game_type = self.unAnsweredMessages[0][5]
 
                     if text.startswith("/"):
