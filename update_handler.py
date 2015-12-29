@@ -1,6 +1,7 @@
 __author__ = 'Rico'
 from twx.botapi import TelegramBot, botapi
 from messageSender import sendmessage
+from sql_handler import check_if_user_saved, sql_write
 import datetime, time
 
 
@@ -30,6 +31,14 @@ def getUpdates(offset, BOT_TOKEN):
                         last_name = ""
                     update_id = update.update_id
                     text = update.message.text
+                    user_index = check_if_user_saved(user_id)
+
+                    if user_index == -1:  # and chat_id == user_id:
+                        print("New User")
+                        tmp = []*0
+                        tmp.extend(("", user_id, "en", first_name, last_name, username, 0, 0, 0, 0))
+                        sql_write(user_id, "en", first_name, last_name, username)  # neuen Nutzer hinzufügen
+                        text = "noText"
 
                     if type(update.message.chat) == botapi.User:
                         chat_type = "0"
