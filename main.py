@@ -43,7 +43,7 @@ class main(object):
         print("Un-Answered Messages: " + str(len(self.unAnsweredMessages)))
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
-        sendmessage(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemOneMore", lang_id), translation("keyboardItemNoMore", lang_id)], [translation("keyboardItemStart", lang_id)]])
+        sendmessage(chat_id, translation("langChanged", lang_id), self.BOT_TOKEN, message_id=message_id, keyboard=[[translation("keyboardItemOneMore", lang_id), translation("keyboardItemNoMore", lang_id)], [translation("keyboardItemStart", lang_id)]])
         self.set_language(user_id, lang_id)
         self.setMessageAnswered()
 
@@ -68,7 +68,7 @@ class main(object):
         return -1
 
     def send_update_message(self, text):
-        sendmessage(24421134, text, keyboard=None)
+        sendmessage(24421134, text, self.BOT_TOKEN, keyboard=None)
 
     def get_emoji_stats(self, percentage):
         text = ""
@@ -94,7 +94,10 @@ class main(object):
                     last_name = self.unAnsweredMessages[0][3]
                     username = self.unAnsweredMessages[0][3]
                     index = self.getIndexByChatID(chat_id)      # getIndexByChatID -> checkt ob Spiel im Chat vorhanden
-                    lang_id = str(check_if_user_saved(user_id)[2])
+                    if len(check_if_user_saved(user_id)[2])>0:
+                        lang_id = str(check_if_user_saved(user_id)[2])
+                    else:
+                        lang_id = "en"
                     game_type = self.unAnsweredMessages[0][5]
 
                     if text.startswith("/"):
