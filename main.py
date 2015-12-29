@@ -51,9 +51,9 @@ class main(object):
         templist = getUpdates(self.offset, self.BOT_TOKEN)
 
         if templist is not None:
-            self.unAnsweredMessages.append(templist)
-
-        self.analyze_messages()
+            for line in templist:
+                self.unAnsweredMessages.append(line)
+            self.analyze_messages()
 
         threading.Timer(1, self.update_adapter).start()
 

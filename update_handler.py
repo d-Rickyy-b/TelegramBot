@@ -8,6 +8,7 @@ import datetime, time
 def getUpdates(offset, BOT_TOKEN):
     bot = TelegramBot(BOT_TOKEN)
     updates = bot.get_updates(offset+1).wait()
+    returnList = [[]]*0
 
     try:
         if updates is not None:
@@ -48,7 +49,9 @@ def getUpdates(offset, BOT_TOKEN):
                     st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                     print(st + "  -  Vorname: " + str(first_name) + " | Nachname: " + str(last_name) + " | Username: " + str(username) + " | UserID: " + str(user_id) + " | ChatType: " + str(chat_type) + " | Nachricht: " + str(text))
                     templist.extend((user_id, update_id, first_name, last_name, text, chat_type, chat_id, message_id))
-                    return templist
+                    returnList.append(templist)
+
+            return returnList
     except:
         print("ERROR IST AUFGETRETEN!")
         sendmessage(24421134, "Bot Error:\n\nNachrichten konnten nicht empfangen werden!", BOT_TOKEN)
