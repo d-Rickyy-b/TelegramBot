@@ -30,8 +30,8 @@ class main(object):
         sql_insert("languageID", lang_id, user_id) # TODO language in gruppen
 
     # returns the Time string to a unix timestamp
-    def get_time(self, unixtime): # no usage found
-        return datetime.datetime.fromtimestamp(int(unixtime)).strftime("%d.%m.%Y %H:%M:%S")
+    # def get_time(self, unixtime): # no usage found
+    #    return datetime.datetime.fromtimestamp(int(unixtime)).strftime("%d.%m.%Y %H:%M:%S")
 
     def addToGameList(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
         bj = blackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.BOT_TOKEN)
@@ -120,11 +120,6 @@ class main(object):
 
                         if index == -1:
                             self.addToGameList(chat_id, user_id, lang_id, game_type, first_name, message_id)
-                            # game = self.GameList[self.getIndexByChatID(chat_id)]
-                            # sendmessage(chat_id, translation("playerDraws1", lang_id).format(game.getKartenName()) + "\n" + translation("playerDraws2", lang_id).format(str(game.kartenwert)), keyboard=keyboard_running)
-                            # sql_insert("lastPlayed", int(time()), user_id)
-                            # add_game_played(user_id)
-                            # users[check_if_user_saved(user_id)][9] = int(time())
                         else:
                             sendmessage(chat_id, translation("alreadyAGame", lang_id), self.BOT_TOKEN, keyboard=keyboard_running)
                     elif text.startswith("language"):
