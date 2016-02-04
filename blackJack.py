@@ -288,7 +288,7 @@ class blackJack(object):
             else:
                 sendmessage(self.chat_id, translation("alreadyJoined", self.lang_id).format(first_name), self.bot, message_id=message_id)
 
-            if len(self.players) == 4:
+            if len(self.players) == 5:
                 self.start_game(message_id)
 
         elif str(command).startswith("stop"):
