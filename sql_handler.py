@@ -8,12 +8,12 @@ def sql_connect():
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users")
-    tempList = [[]]*0
+    temp_list = [[]]*0
 
     result = cursor.fetchall()
     for r in result:
-        tempList.append(list(r))
-    return tempList
+        temp_list.append(list(r))
+    return temp_list
 
 
 def sql_getUser(user_id):
@@ -21,11 +21,8 @@ def sql_getUser(user_id):
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
-    tempList = []*0
 
     result = cursor.fetchall()
-    for r in result:
-        tempList.append(r)
     return result[0]
 
 
@@ -33,7 +30,6 @@ def sql_write(user_id, lang_id, first_name, last_name, username):
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
     cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
-    # print("SQL_write! Nutzer " + first_name + " mit user_id: " + str(user_id) + " wird gespeichert!")
     connection.commit()
 
 
@@ -51,11 +47,8 @@ def check_if_user_saved(user_id):
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
-    tempList = []*0
 
     result = cursor.fetchall()
-    for r in result:
-        tempList.append(list(r))
     if len(result) > 0:
         return result[0]
     else:
