@@ -3,6 +3,9 @@ __author__ = 'Rico'
 import sqlite3
 
 
+# TODO connection als Parameter übergeben
+# TODO funktionsnamen klein geschrieben
+
 def sql_connect():
     connection = sqlite3.connect("users.db")
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
@@ -24,6 +27,15 @@ def sql_getUser(user_id):
 
     result = cursor.fetchall()
     return result[0]
+
+
+def sql_getAllUsers():
+    connection = sqlite3.connect("users.db")
+    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+    cursor = connection.cursor()
+    cursor.execute("SELECT rowid, * FROM users;")
+
+    return cursor.fetchall()
 
 
 def sql_write(user_id, lang_id, first_name, last_name, username):
