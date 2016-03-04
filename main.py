@@ -16,7 +16,7 @@ from sql_handler import sql_connect, sql_insert, check_if_user_saved, sql_getUse
 class Main(object):
     BOT_TOKEN = "<your_bot_token_here>"
     bot = TelegramBot(BOT_TOKEN)
-    unAnsweredMessages = [[]]*0
+    left_msgs = [[]] * 0
     offset = 0
     users = sql_connect()  # List, where userdata is stored in
     game_handler = GameHandler()
@@ -33,10 +33,10 @@ class Main(object):
         self.GameList.append(bj)
 
     def set_message_answered(self):
-        if len(self.unAnsweredMessages)>0 :
-            self.offset = self.unAnsweredMessages[0][1]
-            self.unAnsweredMessages.pop(0)
-            print("Un-Answered Messages: " + str(len(self.unAnsweredMessages)))
+        if len(self.left_msgs) > 0:
+            self.offset = self.left_msgs[0][1]
+            self.left_msgs.pop(0)
+            print("Un-Answered Messages: " + str(len(self.left_msgs)))
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         sendmessage(chat_id, translation("langChanged", lang_id), self.bot, message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
@@ -51,7 +51,7 @@ class Main(object):
         #listLength = len(templist) #throws error if templist is None
         if templist: #and listLength > 0:
             for line in templist:
-                self.unAnsweredMessages.append(line)
+                self.left_msgs.append(line)
             self.analyze_messages()
 
     def get_index_by_chat_id(self, chat_id, i=0):
@@ -73,21 +73,21 @@ class Main(object):
 
     def analyze_messages(self):
         try:
-            while len(self.unAnsweredMessages) > 0:
-                if isinstance(self.unAnsweredMessages[0][4], str):
-                    text_orig = str(self.unAnsweredMessages[0][4])
+            while len(self.left_msgs) > 0:
+                if isinstance(self.left_msgs[0][4], str):
+                    text_orig = str(self.left_msgs[0][4])
                     text = text_orig.lower()
                 else:
                     text = ""
 
-                user_id = self.unAnsweredMessages[0][0]
-                chat_id = self.unAnsweredMessages[0][6]
-                message_id = self.unAnsweredMessages[0][7]
-                first_name = self.unAnsweredMessages[0][2]
-                last_name = self.unAnsweredMessages[0][3]
-                username = self.unAnsweredMessages[0][8]
+                user_id = self.left_msgs[0][0]
+                chat_id = self.left_msgs[0][6]
+                message_id = self.left_msgs[0][7]
+                first_name = self.left_msgs[0][2]
+                last_name = self.left_msgs[0][3]
+                username = self.left_msgs[0][8]
                 lang_id = str(check_if_user_saved(user_id)[2])
-                game_type = self.unAnsweredMessages[0][5]
+                game_type = self.left_msgs[0][5]
 
                 chat_index = self.get_index_by_chat_id(chat_id)  # getIndexByChatID -> checkt ob Spiel im Chat vorhanden
 
@@ -120,8 +120,8 @@ class Main(object):
 
                 elif text.startswith("!answer") and chat_id == 24421134:
                     text_orig = str(text_orig[8:])
-                    if self.unAnsweredMessages[0][9] is not None and self.unAnsweredMessages[0][9] is not "":
-                        msg_chat_id = self.unAnsweredMessages[0][9]
+                    if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":
+                        msg_chat_id = self.left_msgs[0][9]
                         answer_text = str(text_orig)
                     else:
                         try:
