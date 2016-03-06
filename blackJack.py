@@ -72,22 +72,22 @@ class blackJack(object):
         self.message_adapter.add_to_message(sp_mp_text)
 
         if (user.cardvalue + cardvalue) > 21 and user.has_ace is True:
-            self.message_adapter.add_to_message("\nAce is counted as 1 afterwards -> Soft Hand\n")  #softHandLater
+            self.message_adapter.add_to_message("\n" + translation("softHandLater", self.lang_id) + "\n")
             user.has_ace = False
             user.cardvalue -= 10
 
         if cardvalue == 1 and user.cardvalue > 10:
-            self.message_adapter.add_to_message("\nAce is counted as 1 -> Soft Hand\n")  #softHand
+            self.message_adapter.add_to_message("\n" + translation("softHand", self.lang_id) + "\n")
         elif cardvalue == 1 and user.cardvalue <= 10:
             cardvalue = 11
             user.give_ace()
-            self.message_adapter.add_to_message("\nAce is counted as 11 -> Hard Hand\n")  #Todo take from language file #hardHand
+            self.message_adapter.add_to_message("\n" + translation("hardHand", self.lang_id) + "\n")
 
         user.give_card(cardvalue)
         self.message_adapter.add_to_message("\n" + translation("cardvalue", self.lang_id).format(str(user.cardvalue)))
 
         if user.cardvalue == 21:
-            self.message_adapter.add_to_message("\n\n" + first_name + " hat 21 Punkte.")
+            self.message_adapter.add_to_message("\n\n" + first_name + " " + translation("got21", self.lang_id))
             self.message_adapter.send_joined_message()
             self.next_player()
         elif user.cardvalue > 21:
