@@ -276,11 +276,11 @@ class blackJack(object):
                         else:
                             self.message_adapter.sendmessage(self.chat_id, translation("onlyGameCreator", self.lang_id), self.bot, message_id=message_id)
                     else:
-                        self.message_adapter.sendmessage(self.chat_id, translation("alreadyAGame", self.lang_id), self.bot, message_id=message_id)
+                        self.message_adapter.sendmessage(self.chat_id, translation("alreadyAGame", self.lang_id), self.bot, keyboard=self.keyboard_running, message_id=message_id)
                 else:
                     self.message_adapter.sendmessage(self.chat_id, translation("notEnoughPlayers", self.lang_id), self.bot, message_id=message_id)
             else:  # When game is singleplayer
-                self.message_adapter.sendmessage(self.chat_id, translation("alreadyAGame", self.lang_id), self.bot, message_id=message_id)
+                self.message_adapter.sendmessage(self.chat_id, translation("alreadyAGame", self.lang_id), self.bot, keyboard=self.keyboard_running, message_id=message_id)
 
         elif str(command).startswith(translation("onemore", self.lang_id)):
             if self.game_running is True:
