@@ -101,10 +101,8 @@ class Main(object):
                 if text.startswith("comment"):
                     if len(text) == 7 or len(text) == 20:
                         if not user_id in self.CommentList:
-                            print("Bitte sende mir jetzt deinen Kommentar")
-                            sendmessage(chat_id, "Please send me your comment now", self.bot, message_id=message_id, force_reply=1)
+                            sendmessage(chat_id, translation("sendCommentNow", lang_id), self.bot, message_id=message_id, force_reply=1)
                             self.CommentList.append(user_id)
-                            # sendmessage(chat_id, "Usage: /comment yourFeedbackHere", self.bot)
                         else:
                             pass
                     else:
@@ -114,15 +112,19 @@ class Main(object):
                         if user_id in self.CommentList:
                             self.CommentList.pop(self.CommentList.index(user_id))
 
-                elif text.startswith("cancel") and user_id in self.CommentList:
+                elif text.startswith("cancel") and user_id in self.CommentList:  # TODO doesn't work at the moment
                     sendmessage(chat_id, "I cancelled your request", self.bot)
                     self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif text.startswith("!answer") and chat_id == 24421134:
                     text_orig = str(text_orig[8:])
                     if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":
-                        msg_chat_id = self.left_msgs[0][9]
-                        answer_text = str(text_orig)
+                        try:
+                            msg_chat_id = self.left_msgs[0][9]
+                            answer_text = str(text_orig)
+                        except:
+                            msg_chat_id = "24421134"
+                            answer_text = "Fehler"
                     else:
                         try:
                             msg_list = text_orig.split("|")
@@ -133,11 +135,12 @@ class Main(object):
                             msg_chat_id = "24421134"
                             answer_text = "Fehler"
                     sendmessage(24421134, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")", self.bot, parse_mode=None)
-                    sendmessage(msg_chat_id, "Thanks for your comment.\nHere is the answer from the dev: \n\n" + answer_text + "\n\nWrite /comment YourFeedbackHere to send an answer.", self.bot,
-                                parse_mode=None)
+                    sendmessage(msg_chat_id, translation("thanksForComment", lang_id) + "\n" +
+                                translation("answerFromDev", lang_id) + " \n\n" + answer_text + "\n\n" +
+                                translation("clickCommentToAnswer", lang_id), self.bot, parse_mode=None)
 
                 elif user_id in self.CommentList:
-                    sendmessage(chat_id, translation("userComment", lang_id), self.bot, keyboard=keyboard_not_running, parse_mode=None)
+                    sendmessage(chat_id, translation("userComment", lang_id), self.bot, parse_mode=None)
                     sendmessage(24421134,
                                 "Nutzer Kommentar:\n\n" + str(text_orig + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)),
                                 self.bot, parse_mode=None)
