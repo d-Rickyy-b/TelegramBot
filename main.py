@@ -10,11 +10,13 @@ from messageSender import sendmessage, hide_keyboard
 from language import translation
 from gamehandler import GameHandler
 from update_handler import getUpdates
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, sql_getUser
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, sql_getUser, get_playing_users
+import time
+import subprocess
 
 
 class Main(object):
-    BOT_TOKEN = "<your_bot_token_here>"
+    #BOT_TOKEN = "<your_bot_token_here>"
     bot = TelegramBot(BOT_TOKEN)
     left_msgs = [[]] * 0
     offset = 0
@@ -44,6 +46,7 @@ class Main(object):
 
     def batch_run(self):
         while True:
+            time.sleep(0.01)
             self.update_adapter()
 
     def update_adapter(self):
@@ -99,8 +102,9 @@ class Main(object):
                 keyboard_not_running = [[translation("keyboardItemStart", lang_id)]]
 
                 if text.startswith("comment"):
+
                     if len(text) == 7 or len(text) == 20:
-                        if not user_id in self.CommentList:
+                        if user_id not in self.CommentList:
                             sendmessage(chat_id, translation("sendCommentNow", lang_id), self.bot, message_id=message_id, force_reply=1)
                             self.CommentList.append(user_id)
                         else:
@@ -116,6 +120,12 @@ class Main(object):
                     sendmessage(chat_id, "I cancelled your request", self.bot)
                     self.CommentList.pop(self.CommentList.index(user_id))
 
+                elif text.startswith("!ip") and chat_id == 24421134:
+                    text = subprocess.check_output('/home/pi/getip.sh')
+                    sendmessage(24421134, text, self.bot, parse_mode=None)
+                elif text.startswith("!users") and chat_id == 24421134:
+                    text = get_playing_users(time.time()-259200)
+                    sendmessage(24421134, text, self.bot, parse_mode=None)
                 elif text.startswith("!answer") and chat_id == 24421134:
                     text_orig = str(text_orig[8:])
                     if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":

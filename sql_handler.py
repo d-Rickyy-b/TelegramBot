@@ -65,3 +65,13 @@ def check_if_user_saved(user_id):
         return result[0]
     else:
         return -1
+
+
+def get_playing_users(last_played):
+    connection = sqlite3.connect("users.db")
+    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+    cursor = connection.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>='" + str(last_played) + "';")
+
+    result = cursor.fetchall()
+    return result[0]
