@@ -73,5 +73,5 @@ def get_playing_users(last_played):
     cursor = connection.cursor()
     cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>='" + str(last_played) + "';")
 
-    result = cursor.fetchall()
+    result = cursor.fetchone()
     return result[0]
