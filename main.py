@@ -2,6 +2,8 @@
 __author__ = 'Rico'
 
 import datetime
+import time
+import subprocess
 
 from twx.botapi import TelegramBot
 
@@ -11,12 +13,10 @@ from language import translation
 from gamehandler import GameHandler
 from update_handler import getUpdates
 from sql_handler import sql_connect, sql_insert, check_if_user_saved, sql_getUser, get_playing_users
-import time
-import subprocess
 
 
 class Main(object):
-    #BOT_TOKEN = "<your_bot_token_here>"
+    BOT_TOKEN = "<your_bot_token_here>"
     bot = TelegramBot(BOT_TOKEN)
     left_msgs = [[]] * 0
     offset = 0
@@ -24,6 +24,7 @@ class Main(object):
     game_handler = GameHandler()
     GameList = game_handler.GameList #blackJack objects are stored in this list
     CommentList = [] * 0
+    adminList = [24421134, 58139255]
     # message_adapter = messageSenderAdapter(bot, 0)
 
     keyboard_language = [
@@ -120,12 +121,22 @@ class Main(object):
                     sendmessage(chat_id, "I cancelled your request", self.bot)
                     self.CommentList.pop(self.CommentList.index(user_id))
 
-                elif text.startswith("!ip") and chat_id == 24421134:
+                elif text.startswith("!help") and chat_id in self.adminList:
+                    text = "*!help*    -  print this help\n" \
+                           "*!ip*         -  print ip address of the Pi\n" \
+                           "*!users*  -  show usercount\n" \
+                           "*!id*         -  show your Telegram ID\n" \
+                           "*!answer* -  answer to a comment"
+
+                    sendmessage(chat_id, text, self.bot)
+                elif text.startswith("!ip") and chat_id in self.adminList:
                     text = subprocess.check_output('/home/pi/getip.sh')
-                    sendmessage(24421134, text, self.bot, parse_mode=None)
-                elif text.startswith("!users") and chat_id == 24421134:
-                    text = get_playing_users(time.time()-259200)
-                    sendmessage(24421134, text, self.bot, parse_mode=None)
+                    sendmessage(chat_id, text, self.bot, parse_mode=None)
+                elif text.startswith("!users") and chat_id in self.adminList:
+                    text = "*Last 24 hours:*\n\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n\n👥 " + str(get_playing_users(time.time() - 259200))
+                    sendmessage(chat_id, text, self.bot)
+                elif text.startswith("!id"):
+                    sendmessage(chat_id, str(chat_id), self.bot, parse_mode=None)
                 elif text.startswith("!answer") and chat_id == 24421134:
                     text_orig = str(text_orig[8:])
                     if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":
