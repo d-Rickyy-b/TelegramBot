@@ -1,12 +1,11 @@
 __author__ = 'Rico'
-from sql_handler import sql_insert
 from time import time
 
+from sql_handler import sql_insert
 
-class player(object):
 
+class Player(object):
     cardvalue = 0
-    currentcard = 0
     number_of_cards = 0
     has_ace = False
 
@@ -21,4 +20,5 @@ class player(object):
         sql_insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
-        self.name = first_name
+        self.first_name = first_name
+        self.cardvalue = 0
