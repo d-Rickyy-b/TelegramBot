@@ -3,13 +3,14 @@ __author__ = 'Rico'
 import sqlite3
 
 
-# TODO connection als Parameter übergeben
-# TODO funktionsnamen klein geschrieben
-
-def sql_connect():
+def sql_get_db_connection():
     connection = sqlite3.connect("users.db")
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    cursor = connection.cursor()
+    return connection.cursor()
+
+
+def sql_connect():
+    cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users")
     temp_list = [[]]*0
 
@@ -19,22 +20,19 @@ def sql_connect():
     return temp_list
 
 
-def sql_getUser(user_id):
-    connection = sqlite3.connect("users.db")
-    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    cursor = connection.cursor()
+def sql_get_user(user_id):
+    cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
 
     result = cursor.fetchall()
-    return result[0]
+    if len(result)>0:
+        return result[0]
+    else:
+        return[]*0
 
-
-def sql_getAllUsers():
-    connection = sqlite3.connect("users.db")
-    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    cursor = connection.cursor()
+def sql_get_all_users():
+    cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users;")
-
     return cursor.fetchall()
 
 
@@ -45,9 +43,7 @@ def sql_write(user_id, lang_id, first_name, last_name, username):
     connection.commit()
 
 
-# Um Werte zu ändern
 def sql_insert(string_value, value, user_id):
-    print("SQL_Insert: " + string_value + " | " + str(value) + " | " + str(user_id))
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET " + str(string_value) + "='" + str(value) + "' WHERE userID='" + str(user_id) + "';")
@@ -55,10 +51,8 @@ def sql_insert(string_value, value, user_id):
 
 
 def check_if_user_saved(user_id):
-    connection = sqlite3.connect("users.db")
-    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    cursor = connection.cursor()
-    cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
+    cursor = sql_get_db_connection()
+    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;",[str(user_id)])
 
     result = cursor.fetchall()
     if len(result) > 0:
@@ -68,10 +62,20 @@ def check_if_user_saved(user_id):
 
 
 def get_playing_users(last_played):
-    connection = sqlite3.connect("users.db")
-    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    cursor = connection.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>='" + str(last_played) + "';")
+    cursor = sql_get_db_connection()
+    cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>=?;", [str(last_played)])
 
     result = cursor.fetchone()
     return result[0]
+
+
+def get_highest_ranked_player():
+    cursor = sql_get_db_connection()
+    cursor.execute("SELECT * FROM users ORDER BY gamesWon DESC LIMIT 10;")
+    result = cursor.fetchall()
+
+    return_text = ""
+
+    for r in result:
+        return_text += r[0] + " | " + r[2] + " | " + r[3] + " | @" + r[4] + " | Spiele: " + r[5] + " | Gew: " + r[6] + " (" + r[1] + ")\n"
+    return return_text
