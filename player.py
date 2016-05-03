@@ -1,6 +1,5 @@
 __author__ = 'Rico'
 from time import time
-
 from sql_handler import sql_insert
 
 
