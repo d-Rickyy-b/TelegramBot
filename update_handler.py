@@ -3,11 +3,10 @@ import datetime
 import time
 import re
 
-from messageSender import sendmessage
 from sql_handler import check_if_user_saved, sql_write
 
 
-def getUpdates(offset, bot):
+def get_updates(offset, bot):
     updates = bot.get_updates(offset+1).wait()
     returnlist = [[]]*0
 
@@ -23,6 +22,8 @@ def getUpdates(offset, bot):
                     username = update.message.sender.username
                     chat_id = update.message.chat.id
                     message_id = update.message.message_id
+                    update_id = update.update_id
+                    text = update.message.text
                     reply_message_text = ""
 
                     if update.message.reply_to_message is not None:
@@ -30,7 +31,7 @@ def getUpdates(offset, bot):
 
                         if reply_message_text is not None:
                             try:
-                                pattern = re.compile("([0-9]{8,}) \|")
+                                pattern = re.compile("([0-9]{5,}) \|") #pretty weak detection of a user's messsage (regarding /comment feature)
                                 reply_message_text = pattern.search(reply_message_text).group(1)
                             except:
                                 reply_message_text = ""
@@ -39,11 +40,8 @@ def getUpdates(offset, bot):
                         username = ""
                     if last_name is None:
                         last_name = ""
-                    update_id = update.update_id
-                    text = update.message.text
-                    user_index = check_if_user_saved(user_id) #database
 
-                    if user_index == -1:  # and chat_id == user_id:
+                    if check_if_user_saved(user_id) == -1:  # and chat_id == user_id:
                         print("New User")
                         sql_write(user_id, "en", first_name, last_name, username)  # neuen Nutzer hinzufügen
 
@@ -58,7 +56,6 @@ def getUpdates(offset, bot):
                     returnlist.append(templist)
                 except AttributeError:
                     print("AttributeError ist aufgetreten!")
-                    sendmessage(24421134, "Bot Error:\n\nAttributeError ist aufgetreten", bot)
         return returnlist
     else:
         return None
