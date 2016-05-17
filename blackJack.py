@@ -19,7 +19,8 @@ class blackJack(object):
     PRIVATE_CHAT = 0
     keyboard_language = [
         ["Deutsch 🇩🇪", "English 🇺🇸"],
-        ["Português 🇧🇷", "Nederlands 🇳🇱"], ["Esperanto 🌍"]]
+        ["Português 🇧🇷", "Nederlands 🇳🇱"],
+        ["Esperanto 🌍", "Español 🇪🇸"]]
 
     game_running = False
     card_count_dealer = 0
@@ -45,7 +46,7 @@ class blackJack(object):
         if (self.current_player + 1) < len(self.players):
             self.current_player += 1
             self.message_adapter.send_new_message(self.chat_id, translation("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
-                        translation("nextPlayer", self.lang_id).format(self.players[self.current_player].name), message_id=self.join_ids[self.current_player], keyboard=self.keyboard_running)
+                        translation("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name), message_id=self.join_ids[self.current_player], keyboard=self.keyboard_running)
         else:
             self.current_player = -1
             self.dealers_turn()
@@ -244,7 +245,7 @@ class blackJack(object):
     # Messages are analyzed here. Most function calls come from here
     def analyze_message(self, command, user_id, first_name, message_id):
         print("analyze_message - " + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        if str(command).startswith(translation("startCmd", self.lang_id)) or str(command).startswith("start"):
+        if str(command).startswith("start") or str(command).startswith(translation("startCmd", self.lang_id)):
             if self.game_type == self.GROUP_CHAT:
                 if len(self.players) >= 1:  # todo >=2 #wenn genügend Spieler dabei sind
                     if self.game_running is False:  # wenn das Spiel noch nicht läuft
@@ -272,7 +273,7 @@ class blackJack(object):
             if user_id == self.players[self.current_player].user_id:
                 self.next_player()
 
-        elif str(command).startswith(translation("join", self.lang_id)) and self.game_type == self.GROUP_CHAT:
+        elif self.game_type == self.GROUP_CHAT and str(command).startswith(translation("join", self.lang_id)):
             # todo one time keyboard
             if self.get_index_by_user_id(user_id) == -1:
                 self.add_player(user_id, first_name, message_id)
@@ -282,7 +283,7 @@ class blackJack(object):
             if len(self.players) == 5:
                 self.start_game(message_id)
 
-        elif str(command).startswith(translation("stopCmd", self.lang_id)) or str(command).startswith("stop"):
+        elif str(command).startswith("stop") or str(command).startswith(translation("stopCmd", self.lang_id)):
             if user_id == self.players[0].user_id:
                 self.game_handler_object.gl_remove(self.chat_id)
 
@@ -299,6 +300,10 @@ class blackJack(object):
                 self.change_language("br", message_id, user_id)
             elif str(command).startswith("nederlands"):
                 self.change_language("nl", message_id, user_id)
+            elif str(command).startswith("esperanto"):
+                self.change_language("eo", message_id, user_id)
+            elif str(command).startswith("Español"):
+                self.change_language("es", message_id, user_id)
         else:
             print("No matches!")
 
@@ -334,6 +339,4 @@ class blackJack(object):
 
     #When game is being ended - single and multiplayer
     def __del__(self):
-        #for player in self.players:
-        #    self.players.pop()
         self.message_adapter.hide_keyboard(self.chat_id, translation("gameEnded", self.lang_id))
