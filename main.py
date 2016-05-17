@@ -30,7 +30,8 @@ class Main(object):
 
     keyboard_language = [
         ["Deutsch 🇩🇪", "English 🇺🇸"],
-        ["Português 🇧🇷", "Nederlands 🇳🇱"], ["Esperanto 🌍"]]
+        ["Português 🇧🇷", "Nederlands 🇳🇱"],
+        ["Esperanto 🌍", "Español 🇪🇸"]]
 
     def add_to_game_list(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
         blackJackGame = blackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
@@ -92,7 +93,7 @@ class Main(object):
                             self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, force_reply=1)
                             self.CommentList.append(user_id)
                         else:
-                            pass
+                            pass #TODO was soll hier passieren?
                     else:
                         self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running)
                         self.message_adapter.send_new_message(self.DEV_ID, "Nutzer Kommentar:\n\n" + str(
@@ -175,6 +176,8 @@ class Main(object):
                     self.send_lang_changed_message(chat_id, message_id, "nl", user_id)
                 elif text.startswith("esperanto"):
                     self.send_lang_changed_message(chat_id, message_id, "eo", user_id)
+                elif text.startswith("español"):
+                    self.send_lang_changed_message(chat_id, message_id, "es", user_id)
 
                 elif text.startswith("hide"):
                     self.message_adapter.hide_keyboard(chat_id, self.bot)
