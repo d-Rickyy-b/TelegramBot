@@ -5,12 +5,12 @@ from twx.botapi import ReplyKeyboardMarkup, ReplyKeyboardHide, ForceReply
 class messageSenderAdapter(object):
     def sendmessage(self, chat_id, message_text, bot, message_id=None, keyboard=None, one_time_keyboard=None, force_reply=None):
         if force_reply is not None:
-            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, reply_markup=ForceReply.create(selective=True), parse_mode="Markdown").wait()
+            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, reply_markup=ForceReply.create(selective=True), parse_mode="Markdown")
         if keyboard is not None:
             reply_markup = ReplyKeyboardMarkup.create(keyboard, selective=True, one_time_keyboard=one_time_keyboard)
-            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, reply_markup=reply_markup, parse_mode="Markdown").wait()
+            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, reply_markup=reply_markup, parse_mode="Markdown")
         else:
-            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, parse_mode="Markdown").wait()
+            bot.send_message(chat_id, message_text, reply_to_message_id=message_id, parse_mode="Markdown")
         self.clear_message()
 
     def send_joined_message(self, ):
