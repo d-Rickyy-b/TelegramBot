@@ -21,9 +21,9 @@ class Main(object):
     bot = TelegramBot(BOT_TOKEN)
     left_msgs = [[]] * 0
     offset = 0
-    users = sql_connect()  # List, where userdata is stored in
+    users = sql_connect()
     game_handler = GameHandler()
-    GameList = game_handler.GameList #blackJack objects are stored in this list
+    GameList = game_handler.GameList
     CommentList = [] * 0
     adminList = [DEV_ID, 58139255]
     message_adapter = MessageSenderAdapter(bot, 0)
@@ -34,8 +34,8 @@ class Main(object):
         ["Esperanto 🌍", "Español 🇪🇸"]]
 
     def add_to_game_list(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
-        blackJackGame = blackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
-        self.game_handler.add_game(blackJackGame)
+        black_jack_game = blackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
+        self.game_handler.add_game(black_jack_game)
 
     def set_message_answered(self):
         if len(self.left_msgs) > 0:
@@ -45,7 +45,7 @@ class Main(object):
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         self.message_adapter.send_new_message(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
-        sql_insert("languageID", lang_id, user_id) # TODO language in gruppen
+        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups
 
     def batch_run(self):
         while True:
@@ -92,8 +92,6 @@ class Main(object):
                         if user_id not in self.CommentList:
                             self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, force_reply=1)
                             self.CommentList.append(user_id)
-                        else:
-                            pass #TODO was soll hier passieren?
                     else:
                         self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running)
                         self.message_adapter.send_new_message(self.DEV_ID, "Nutzer Kommentar:\n\n" + str(
@@ -101,7 +99,7 @@ class Main(object):
                         if user_id in self.CommentList:
                             self.CommentList.pop(self.CommentList.index(user_id))
 
-                elif text.startswith("cancel") and user_id in self.CommentList:  # TODO doesn't work at the moment
+                elif text.startswith("cancel") and user_id in self.CommentList:
                     self.message_adapter.send_new_message(chat_id, "I cancelled your request")
                     self.CommentList.pop(self.CommentList.index(user_id))
 
