@@ -7,7 +7,7 @@ from player import Player
 from statistics import add_game_played, set_game_won
 from sql_handler import sql_insert
 from messageSenderAdapter import MessageSenderAdapter
-from CardDeck import CardDeck
+from cardDeck import CardDeck
 
 
 #from language_handler import change_language, send_change_lang_message
