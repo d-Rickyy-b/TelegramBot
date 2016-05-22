@@ -6,8 +6,8 @@ import subprocess
 
 from twx.botapi import TelegramBot
 
-from blackJack import blackJack
 from language import translation
+from blackJack import BlackJack
 from gamehandler import GameHandler
 from update_handler import get_updates
 from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_highest_ranked_player
@@ -17,7 +17,6 @@ from statistics import get_user_stats
 
 class Main(object):
     BOT_TOKEN = "<your_bot_token_here>"
-    DEV_ID = 24421134
     bot = TelegramBot(BOT_TOKEN)
     left_msgs = [[]] * 0
     offset = 0
@@ -25,6 +24,7 @@ class Main(object):
     game_handler = GameHandler()
     GameList = game_handler.GameList
     CommentList = [] * 0
+    DEV_ID = 24421134
     adminList = [DEV_ID, 58139255]
     message_adapter = MessageSenderAdapter(bot, 0)
 
@@ -34,7 +34,7 @@ class Main(object):
         ["Esperanto 🌍", "Español 🇪🇸"]]
 
     def add_to_game_list(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
-        black_jack_game = blackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
+        black_jack_game = BlackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
         self.game_handler.add_game(black_jack_game)
 
     def set_message_answered(self):
@@ -49,7 +49,7 @@ class Main(object):
 
     def batch_run(self):
         while True:
-            time.sleep(0.01)
+            # time.sleep(0.01)
             self.update_adapter()
 
     def update_adapter(self):
@@ -88,9 +88,9 @@ class Main(object):
                 keyboard_not_running = [[translation("keyboardItemStart", lang_id)]]
                 if text.startswith("comment"):
 
-                    if len(text) == 7 or len(text) == 20:
+                    if len(text) == 7 or len(text) == 20:  # TODO Very bad coding... i NEED to change this
                         if user_id not in self.CommentList:
-                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, force_reply=1)
+                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, force_reply=1)  #TODO implement "cancel" keyboard
                             self.CommentList.append(user_id)
                     else:
                         self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running)
@@ -100,51 +100,8 @@ class Main(object):
                             self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif text.startswith("cancel") and user_id in self.CommentList:
-                    self.message_adapter.send_new_message(chat_id, "I cancelled your request")
+                    self.message_adapter.send_new_message(chat_id, "I cancelled your request")  #TODO translation of the string
                     self.CommentList.pop(self.CommentList.index(user_id))
-
-                elif text.startswith("!help") and chat_id in self.adminList:
-                    message_text = "*!help*    -  print this help\n" \
-                           "*!ip*         -  print ip address of the Pi\n" \
-                           "*!users*  -  show usercount\n" \
-                           "*!id*         -  show your Telegram ID\n" \
-                           "*!answer* -  answer to a comment"
-
-                    self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
-                elif text.startswith("!ip") and chat_id in self.adminList:
-                    try:
-                        message_text = subprocess.check_output('/home/pi/getip.sh')
-                        self.message_adapter.send_new_message(chat_id, message_text)
-                    except FileNotFoundError:
-                        self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
-                elif text.startswith("!users") and chat_id in self.adminList:
-                    message_text = "*Here is the usercount for this bot:*\n\n*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
-                    self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
-                    self.message_adapter.send_new_message(chat_id, get_highest_ranked_player())
-                elif text.startswith("!id"):
-                    self.message_adapter.send_new_message(chat_id, str(chat_id))
-                elif text.startswith("!answer") and chat_id == self.DEV_ID:
-                    text_orig = str(text_orig[8:])
-                    if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":
-                        try:
-                            msg_chat_id = self.left_msgs[0][9]
-                            answer_text = str(text_orig)
-                        except:
-                            msg_chat_id = "DEV_ID"
-                            answer_text = "Fehler"
-                    else:
-                        try:
-                            msg_list = text_orig.split("|")
-                            answer_text = str(msg_list[0])
-                            msg_chat_id = msg_list[1]
-                        except:
-                            self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
-                            msg_chat_id = "DEV_ID"
-                            answer_text = "Fehler"
-                    self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
-                    self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", lang_id) + "\n" +
-                                translation("answerFromDev", lang_id) + " \n\n" + answer_text + "\n\n" +
-                                translation("clickCommentToAnswer", lang_id))
 
                 elif user_id in self.CommentList:
                     self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id))
@@ -181,10 +138,55 @@ class Main(object):
                     self.message_adapter.hide_keyboard(chat_id, self.bot)
                 elif text.startswith("stats"):
                     self.message_adapter.send_new_message(chat_id, get_user_stats(user_id), message_id)
+
+                elif text.startswith("!id"):
+                    self.message_adapter.send_new_message(chat_id, str(chat_id))
+                elif text.startswith("!answer") and chat_id == self.DEV_ID:
+                    text_orig = str(text_orig[8:])
+                    if self.left_msgs[0][9] is not None and self.left_msgs[0][9] is not "":
+                        try:
+                            msg_chat_id = self.left_msgs[0][9]
+                            answer_text = str(text_orig)
+                        except:
+                            msg_chat_id = "DEV_ID"
+                            answer_text = "Fehler"
+                    else:
+                        try:
+                            msg_list = text_orig.split("|")
+                            answer_text = str(msg_list[0])
+                            msg_chat_id = msg_list[1]
+                        except:
+                            self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
+                            msg_chat_id = "DEV_ID"
+                            answer_text = "Fehler"
+                    self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
+                    self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", lang_id) + "\n" +
+                                                          translation("answerFromDev", lang_id) + " \n\n" + answer_text + "\n\n" +
+                                                          translation("clickCommentToAnswer", lang_id))
+
+                elif user_id in self.adminList:
+                    if text.startswith("!help"):
+                        message_text = "*!help*    -  print this help\n" \
+                                       "*!ip*         -  print ip address of the Pi\n" \
+                                       "*!users*  -  show usercount\n" \
+                                       "*!id*         -  show your Telegram ID\n" \
+                                       "*!answer* -  answer to a comment"
+
+                        self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
+                    elif text.startswith("!ip"):
+                        try:
+                            message_text = subprocess.check_output('/home/pi/getip.sh')
+                            self.message_adapter.send_new_message(chat_id, message_text)
+                        except FileNotFoundError:
+                            self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
+                    elif text.startswith("!users"):
+                        message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
+                        self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
+                        self.message_adapter.send_new_message(chat_id, get_highest_ranked_player())
                 self.set_message_answered()
         except:
+            self.set_message_answered()
             self.message_adapter.send_new_message(self.DEV_ID, "Bot Error:\n\nNachrichten konnten nicht ausgewertet werden!")
-            raise
 
     def __init__(self):
         print("Bot gestartet")
