@@ -31,7 +31,7 @@ def get_updates(offset, bot):
 
                         if reply_message_text is not None:
                             try:
-                                pattern = re.compile("([0-9]{5,}) \|") #pretty weak detection of a user's messsage (regarding /comment feature)
+                                pattern = re.compile("([0-9]{5,}) \|")  # pretty weak detection of a userid in the answer (regarding /comment feature)
                                 reply_message_text = pattern.search(reply_message_text).group(1)
                             except:
                                 reply_message_text = ""
@@ -41,9 +41,9 @@ def get_updates(offset, bot):
                     if last_name is None:
                         last_name = ""
 
-                    if check_if_user_saved(user_id) == -1:  # and chat_id == user_id:
-                        print("New User")
-                        sql_write(user_id, "en", first_name, last_name, username)  # neuen Nutzer hinzufügen
+                    not_saved = -1
+                    if check_if_user_saved(user_id) == not_saved:
+                        sql_write(user_id, "en", first_name, last_name, username)  # add new user to db
 
                     if chat_id > 0:
                         chat_type = "0"
