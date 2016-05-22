@@ -16,7 +16,7 @@ class MessageSenderAdapter(object):
     def send_new_message(self, chat_id, message_text, message_id=None, keyboard=None, one_time_keyboard=None, force_reply=None, parse_mode=None):
         self.text = message_text
         self.chat_id = chat_id
-        self.message_id = message_id #None?
+        self.message_id = message_id
         self.keyboard = keyboard
         self.one_time_keyboard = one_time_keyboard
         self.force_reply = force_reply
@@ -44,7 +44,7 @@ class MessageSenderAdapter(object):
 
     def clear_message(self):
         self.text = ""
-        self.message_id = 0
+        self.message_id = None
         self.keyboard = None
         self.one_time_keyboard = None
 
@@ -52,7 +52,7 @@ class MessageSenderAdapter(object):
         self.bot = bot
         self.text = ""
         self.chat_id = chat_id
-        self.message_id = 0 #None?
+        self.message_id = None
         self.keyboard = None
         self.one_time_keyboard = None
         self.force_reply = None
