@@ -1,5 +1,6 @@
 __author__ = 'Rico'
 
+
 # game_handler handles the blackJack-game-objects. When a new object is created, it is saved in "GameList"
 # get_index_by_chatid returns the index of a running game in the list
 class GameHandler(object):
