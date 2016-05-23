@@ -291,21 +291,6 @@ class BlackJack(object):
 
         elif str(command).startswith("hide"):
             self.message_adapter.hide_keyboard(self.chat_id)
-        elif not self.game_running:
-            if str(command).startswith("language"):
-                self.message_adapter.send_new_message(self.chat_id, self.translate("langSelect"), keyboard=self.keyboard_language, message_id=message_id)
-            elif str(command).startswith("deutsch"):
-                self.change_language("de", message_id, user_id)
-            elif str(command).startswith("english"):
-                self.change_language("en", message_id, user_id)
-            elif str(command).startswith("português"):
-                self.change_language("br", message_id, user_id)
-            elif str(command).startswith("nederlands"):
-                self.change_language("nl", message_id, user_id)
-            elif str(command).startswith("esperanto"):
-                self.change_language("eo", message_id, user_id)
-            elif str(command).startswith("Español"):
-                self.change_language("es", message_id, user_id)
         else:
             print("No matches!")
 
