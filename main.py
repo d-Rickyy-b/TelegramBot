@@ -157,7 +157,7 @@ class Main(object):
                             msg_chat_id = msg_list[1]
                         except:
                             self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
-                            msg_chat_id = "DEV_ID"
+                            msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
                     self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", lang_id) + "\n" +
