@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Rico'
 
-import time
 import subprocess
+import time
 
 from twx.botapi import TelegramBot
 
-from language import translation
 from blackJack import BlackJack
 from gamehandler import GameHandler
-from update_handler import get_updates
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_highest_ranked_player
+from language import translation
 from messageSenderAdapter import MessageSenderAdapter
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_highest_ranked_player
 from statistics import get_user_stats
+from update_handler import get_updates
 
 
 class Main(object):
@@ -135,7 +135,7 @@ class Main(object):
                     self.send_lang_changed_message(chat_id, message_id, "es", user_id)
 
                 elif text.startswith("hide"):
-                    self.message_adapter.hide_keyboard(chat_id, self.bot)
+                    self.message_adapter.hide_keyboard(chat_id)
                 elif text.startswith("stats"):
                     self.message_adapter.send_new_message(chat_id, get_user_stats(user_id), message_id)
 
