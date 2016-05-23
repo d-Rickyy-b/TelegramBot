@@ -10,9 +10,6 @@ from messageSenderAdapter import MessageSenderAdapter
 from cardDeck import CardDeck
 
 
-#from language_handler import change_language, send_change_lang_message
-
-
 class BlackJack(object):
     GROUP_CHAT = 1
     PRIVATE_CHAT = 0
@@ -31,7 +28,7 @@ class BlackJack(object):
             self.players.append(Player(user_id, first_name))
             self.join_message_ids.append(message_id)
             if silent is None:
-                self.message_adapter.send_new_message(self.chat_id, self.translate("playerJoined").format(first_name), message_id=message_id)  # , keyboard=self.keyboard_not_running removed
+                self.message_adapter.send_new_message(self.chat_id, self.translate("playerJoined").format(first_name), message_id=message_id)
 
     def get_index_by_user_id(self, user_id):
         i = 0
