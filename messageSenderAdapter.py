@@ -5,12 +5,12 @@ from twx.botapi import ReplyKeyboardMarkup, ReplyKeyboardHide, ForceReply
 class MessageSenderAdapter(object):
     def __sendmessage(self):
         if self.force_reply is not None:
-            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, reply_markup=ForceReply.create(selective=True), parse_mode=self.parse_mode)
+            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, reply_markup=ForceReply.create(selective=True), parse_mode=self.parse_mode).wait()
         elif self.keyboard is not None:
             reply_markup = ReplyKeyboardMarkup.create(self.keyboard, selective=True, one_time_keyboard=self.one_time_keyboard)
-            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, reply_markup=reply_markup, parse_mode=self.parse_mode)
+            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, reply_markup=reply_markup, parse_mode=self.parse_mode).wait()
         else:
-            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, parse_mode=self.parse_mode)
+            self.bot.send_message(self.chat_id, self.text, reply_to_message_id=self.message_id, parse_mode=self.parse_mode).wait()
         self.clear_message()
 
     def send_new_message(self, chat_id, message_text, message_id=None, keyboard=None, one_time_keyboard=None, force_reply=None, parse_mode=None):
