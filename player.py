@@ -24,7 +24,7 @@ class Player(object):
         for i, card in enumerate(self.cards):
             cards_string += self.deck.get_card_name(card)
             if i+1 < len(self.cards):
-                cards_string += ", "  # TODO hier steht unter Umständen ein Komma zu viel am Ende
+                cards_string += ", "
         return cards_string
 
     def __init__(self, user_id, first_name, deck):
