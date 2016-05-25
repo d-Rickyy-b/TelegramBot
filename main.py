@@ -46,7 +46,7 @@ class Main(object):
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         self.message_adapter.send_new_message(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
-        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups
+        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
 
     def batch_run(self):
         while True:
@@ -55,7 +55,7 @@ class Main(object):
 
     def update_adapter(self):
         templist = get_updates(self.offset, self.bot)
-        if templist: #and listLength > 0:
+        if templist:
             for line in templist:
                 self.left_msgs.append(line)
             self.analyze_messages()
