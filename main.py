@@ -3,6 +3,7 @@ __author__ = 'Rico'
 
 import subprocess
 import time
+import traceback
 
 from twx.botapi import TelegramBot
 
@@ -45,7 +46,7 @@ class Main(object):
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         self.message_adapter.send_new_message(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
-        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups
+        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
 
     def batch_run(self):
         while True:
@@ -54,7 +55,7 @@ class Main(object):
 
     def update_adapter(self):
         templist = get_updates(self.offset, self.bot)
-        if templist: #and listLength > 0:
+        if templist:
             for line in templist:
                 self.left_msgs.append(line)
             self.analyze_messages()
@@ -75,7 +76,7 @@ class Main(object):
                 first_name = self.left_msgs[0][2]
                 last_name = self.left_msgs[0][3]
                 username = self.left_msgs[0][8]
-                lang_id = str(check_if_user_saved(user_id)[2]) #problem maybe
+                lang_id = str(check_if_user_saved(user_id)[2])
                 game_type = self.left_msgs[0][5]
 
                 chat_index = self.game_handler.get_index(chat_id)  # get_index_by_chatid -> checkt ob Spiel im Chat vorhanden
@@ -86,25 +87,28 @@ class Main(object):
 
                 keyboard_running = [[translation("keyboardItemOneMore", lang_id), translation("keyboardItemNoMore", lang_id)], [translation("keyboardItemStop", lang_id)]]
                 keyboard_not_running = [[translation("keyboardItemStart", lang_id)]]
-                if text.startswith("comment"):
+                keyboard_cancel = [[translation("cancel", lang_id)]]
 
-                    if len(text) == 7 or len(text) == 20:  # TODO Very bad coding... i NEED to change this
+                if text.startswith("comment"):
+                    text = str(text[7:])
+                    # if (len(text) == 13 and text.startswith("@blackjackbot")) or (len(text) == 0): #TODO 13 | @blackjackbot
+                    if (len(text) == 11 and text.startswith("@mytest_bot")) or (len(text) == 0):
                         if user_id not in self.CommentList:
-                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, force_reply=1)  #TODO implement "cancel" keyboard
+                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, keyboard=keyboard_cancel, force_reply=None)
                             self.CommentList.append(user_id)
                     else:
-                        self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running)
+                        self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running, force_reply=None)
                         self.message_adapter.send_new_message(self.DEV_ID, "Nutzer Kommentar:\n\n" + str(
                             text_orig[7:] + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
                         if user_id in self.CommentList:
                             self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif text.startswith("cancel") and user_id in self.CommentList:
-                    self.message_adapter.send_new_message(chat_id, "I cancelled your request")  #TODO translation of the string
+                    self.message_adapter.hide_keyboard(chat_id, "I cancelled your request!")  #TODO translation of the string
                     self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif user_id in self.CommentList:
-                    self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id))
+                    self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), message_id=message_id, keyboard=keyboard_not_running, force_reply=None)
                     self.message_adapter.send_new_message(self.DEV_ID,
                                 "Nutzer Kommentar:\n\n" + str(text_orig + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
                     self.CommentList.pop(self.CommentList.index(user_id))
@@ -187,6 +191,7 @@ class Main(object):
         except:
             self.set_message_answered()
             self.message_adapter.send_new_message(self.DEV_ID, "Bot Error:\n\nNachrichten konnten nicht ausgewertet werden!")
+            traceback.print_exc()
 
     def __init__(self):
         print("Bot gestartet")
