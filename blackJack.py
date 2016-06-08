@@ -112,7 +112,8 @@ class BlackJack(object):
         # TODO wenn nicht, ist Wert > 21 (zwei Asse?)
         # Nachricht schicken
         cards_string = user.get_cards_string()
-        self.message_adapter.send_new_message(self.chat_id, str("{}, deine Karten sind: \n" + cards_string + "\nKartenwert: " + str(user.cardvalue)).format(user.first_name))
+        # self.message_adapter.send_new_message(self.chat_id, str("{}, deine Karten sind: " + "\n" + cards_string + "\n" + "Kartenwert: " + str(user.cardvalue)).format(user.first_name))
+        self.message_adapter.send_new_message(self.chat_id, str(self.translate("yourCardsAre")).format(user.first_name, "\n" + cards_string + "\n", str(user.cardvalue)))
 
     # Gives the dealer cards
     def dealers_turn(self, i=0):
