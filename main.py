@@ -50,7 +50,6 @@ class Main(object):
 
     def batch_run(self):
         while True:
-            # time.sleep(0.01)
             self.update_adapter()
 
     def update_adapter(self):
@@ -91,8 +90,7 @@ class Main(object):
 
                 if text.startswith("comment"):
                     text = str(text[7:])
-                    # if (len(text) == 13 and text.startswith("@blackjackbot")) or (len(text) == 0): #TODO 13 | @blackjackbot
-                    if (len(text) == 11 and text.startswith("@mytest_bot")) or (len(text) == 0):
+                    if ((len(text) == 13 and text.startswith("@blackjackbot")) or (len(text) == 0)) or ((len(text) == 11 and text.startswith("@mytest_bot")) or (len(text) == 0)):
                         if user_id not in self.CommentList:
                             self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, keyboard=keyboard_cancel, force_reply=None)
                             self.CommentList.append(user_id)
@@ -104,7 +102,7 @@ class Main(object):
                             self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif text.startswith("cancel") and user_id in self.CommentList:
-                    self.message_adapter.hide_keyboard(chat_id, "I cancelled your request!")  #TODO translation of the string
+                    self.message_adapter.hide_keyboard(chat_id, translation("cancelledMessage", lang_id))
                     self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif user_id in self.CommentList:
@@ -163,10 +161,11 @@ class Main(object):
                             self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
                             msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
+                    user_lang_id = str(check_if_user_saved(msg_chat_id)[2])
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
-                    self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", lang_id) + "\n" +
-                                                          translation("answerFromDev", lang_id) + " \n\n" + answer_text + "\n\n" +
-                                                          translation("clickCommentToAnswer", lang_id))
+                    self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", user_lang_id) + "\n" +
+                                                          translation("answerFromDev", user_lang_id) + " \n\n" + answer_text + "\n\n" +
+                                                          translation("clickCommentToAnswer", user_lang_id))
 
                 elif user_id in self.adminList:
                     if text.startswith("!help"):
