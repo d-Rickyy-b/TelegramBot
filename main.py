@@ -11,7 +11,7 @@ from blackJack import BlackJack
 from gamehandler import GameHandler
 from language import translation
 from messageSenderAdapter import MessageSenderAdapter
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_highest_ranked_player
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data
 from statistics import get_user_stats
 from update_handler import get_updates
 
@@ -77,6 +77,9 @@ class Main(object):
                 username = self.left_msgs[0][8]
                 lang_id = str(check_if_user_saved(user_id)[2])
                 game_type = self.left_msgs[0][5]
+
+                if user_data_changed(user_id, first_name, last_name, username):
+                    set_user_data(user_id, first_name, last_name, username)
 
                 chat_index = self.game_handler.get_index(chat_id)  # get_index_by_chatid -> checkt ob Spiel im Chat vorhanden
 
@@ -185,7 +188,7 @@ class Main(object):
                     elif text.startswith("!users"):
                         message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
-                        self.message_adapter.send_new_message(chat_id, get_highest_ranked_player())
+                        self.message_adapter.send_new_message(chat_id, get_last_players_list())
                 self.set_message_answered()
         except:
             self.set_message_answered()

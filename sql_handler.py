@@ -69,9 +69,9 @@ def get_playing_users(last_played):
     return result[0]
 
 
-def get_highest_ranked_player():
+def get_last_players_list():
     cursor = sql_get_db_connection()
-    cursor.execute("SELECT * FROM users ORDER BY gamesWon DESC LIMIT 10;")
+    cursor.execute("SELECT * FROM users ORDER BY lastPlayed DESC LIMIT 10;")
     result = cursor.fetchall()
 
     return_text = ""
@@ -79,3 +79,23 @@ def get_highest_ranked_player():
     for r in result:
         return_text += r[0] + " | " + r[2] + " | " + r[3] + " | @" + r[4] + " | Spiele: " + r[5] + " | Gew: " + r[6] + " (" + r[1] + ")\n"
     return return_text
+
+
+def user_data_changed(user_id, first_name, last_name, username):
+    cursor = sql_get_db_connection()
+    cursor.execute("SELECT * FROM users WHERE userID='" + str(user_id) + "';")
+
+    result = cursor.fetchone()
+    print(result)
+    if str(result[0][2]) == first_name and str(result[0][3]) == last_name and str(result[0][3]) == username:
+        print("alles richtig")
+        return False
+
+    return True
+
+
+def set_user_data(user_id, first_name, last_name, username):
+    connection = sqlite3.connect("users.db")
+    cursor = connection.cursor()
+    cursor.execute("UPDATE users SET first_name='" + str(first_name) + "', last_name='" + str(last_name) + "', username='" + str(username) + "' WHERE userID='" + str(user_id) + "';")
+    connection.commit()

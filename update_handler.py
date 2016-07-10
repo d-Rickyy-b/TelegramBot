@@ -1,6 +1,5 @@
 __author__ = 'Rico'
 import datetime
-import time
 import re
 
 from sql_handler import check_if_user_saved, sql_write
@@ -24,6 +23,7 @@ def get_updates(offset, bot):
                     message_id = update.message.message_id
                     update_id = update.update_id
                     text = update.message.text
+                    upd_time = int(update.message.date)
                     reply_message_text = ""
 
                     if update.message.reply_to_message is not None:
@@ -50,7 +50,7 @@ def get_updates(offset, bot):
                     else:
                         chat_type = "1"
 
-                    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')  # TODO print the time, the message was received by the server
+                    st = datetime.datetime.fromtimestamp(upd_time).strftime('%Y-%m-%d %H:%M:%S')  # TODO print the time, the message was received by the server
                     print(st + "  -  Vorname: " + str(first_name) + " | Nachname: " + str(last_name) + " | Username: " + str(username) + " | UserID: " + str(user_id) + " | ChatType: " + str(chat_type) + " | Nachricht: " + str(text))
                     templist.extend((user_id, update_id, first_name, last_name, text, chat_type, chat_id, message_id, username, reply_message_text))
                     returnlist.append(templist)
