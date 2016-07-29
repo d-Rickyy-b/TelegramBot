@@ -12,7 +12,7 @@ def sql_get_db_connection():
 def sql_connect():
     cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users")
-    temp_list = [[]]*0
+    temp_list = [[]] * 0
 
     result = cursor.fetchall()
     for r in result:
@@ -25,10 +25,10 @@ def sql_get_user(user_id):
     cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
 
     result = cursor.fetchall()
-    if len(result)>0:
+    if len(result) > 0:
         return result[0]
     else:
-        return[]*0
+        return [] * 0
 
 
 def sql_get_all_users():
