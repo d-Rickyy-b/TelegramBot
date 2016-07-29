@@ -30,6 +30,7 @@ def sql_get_user(user_id):
     else:
         return[]*0
 
+
 def sql_get_all_users():
     cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users;")
@@ -52,7 +53,7 @@ def sql_insert(string_value, value, user_id):
 
 def check_if_user_saved(user_id):
     cursor = sql_get_db_connection()
-    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;",[str(user_id)])
+    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
     result = cursor.fetchall()
     if len(result) > 0:
@@ -83,12 +84,11 @@ def get_last_players_list():
 
 def user_data_changed(user_id, first_name, last_name, username):
     cursor = sql_get_db_connection()
-    cursor.execute("SELECT * FROM users WHERE userID='" + str(user_id) + "';")
+    cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
     result = cursor.fetchone()
     print(result)
     if str(result[0][2]) == first_name and str(result[0][3]) == last_name and str(result[0][3]) == username:
-        print("alles richtig")
         return False
 
     return True
@@ -97,5 +97,5 @@ def user_data_changed(user_id, first_name, last_name, username):
 def set_user_data(user_id, first_name, last_name, username):
     connection = sqlite3.connect("users.db")
     cursor = connection.cursor()
-    cursor.execute("UPDATE users SET first_name='" + str(first_name) + "', last_name='" + str(last_name) + "', username='" + str(username) + "' WHERE userID='" + str(user_id) + "';")
+    cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
     connection.commit()
