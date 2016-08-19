@@ -112,7 +112,6 @@ class BlackJack(object):
         # TODO wenn nicht, ist Wert > 21 (zwei Asse?)
         # Nachricht schicken
         cards_string = user.get_cards_string()
-        # self.message_adapter.send_new_message(self.chat_id, str("{}, deine Karten sind: " + "\n" + cards_string + "\n" + "Kartenwert: " + str(user.cardvalue)).format(user.first_name))
         self.message_adapter.send_new_message(self.chat_id, str(self.translate("yourCardsAre")).format(user.first_name, "\n" + cards_string + "\n", str(user.cardvalue)))
 
     # Gives the dealer cards
@@ -163,12 +162,12 @@ class BlackJack(object):
         # ---------------------------------- Auswertung -----------------------------------------#
 
     def evaluation(self):
-        list_21 = [[]]*0
-        list_busted = [[]]*0
-        list_lower_21 = [[]]*0
+        list_21 = [[]] * 0
+        list_busted = [[]] * 0
+        list_lower_21 = [[]] * 0
 
         for user in self.players:
-            tmplist = []*0
+            tmplist = [] * 0
             cv = user.cardvalue
             tmplist.extend((cv, user.first_name, user.number_of_cards, user.user_id))
             if cv > 21:
