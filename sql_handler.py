@@ -6,56 +6,68 @@ import sqlite3
 def sql_get_db_connection():
     connection = sqlite3.connect("users.db")
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    return connection.cursor()
+    return connection
 
 
 def sql_connect():
-    cursor = sql_get_db_connection()
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users")
-    temp_list = [[]] * 0
+    temp_list = []
 
     result = cursor.fetchall()
     for r in result:
         temp_list.append(list(r))
+
+    connection.close()
     return temp_list
 
 
 def sql_get_user(user_id):
-    cursor = sql_get_db_connection()
-    cursor.execute("SELECT rowid, * FROM users WHERE userID='" + str(user_id) + "';")
-
-    result = cursor.fetchall()
-    if len(result) > 0:
-        return result[0]
-    else:
-        return [] * 0
-
-
-def sql_get_all_users():
-    cursor = sql_get_db_connection()
-    cursor.execute("SELECT rowid, * FROM users;")
-    return cursor.fetchall()
-
-
-def sql_write(user_id, lang_id, first_name, last_name, username):
-    connection = sqlite3.connect("users.db")
+    connection = sql_get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
-    connection.commit()
-
-
-def sql_insert(string_value, value, user_id):
-    connection = sqlite3.connect("users.db")
-    cursor = connection.cursor()
-    cursor.execute("UPDATE users SET " + str(string_value) + "='" + str(value) + "' WHERE userID='" + str(user_id) + "';")
-    connection.commit()
-
-
-def check_if_user_saved(user_id):
-    cursor = sql_get_db_connection()
     cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
     result = cursor.fetchall()
+    connection.close()
+    if len(result) > 0:
+        return result[0]
+    else:
+        return []
+
+
+def sql_get_all_users():
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT rowid, * FROM users;")
+    all_users = cursor.fetchall()
+    connection.close()
+    return all_users
+
+
+def sql_write(user_id, lang_id, first_name, last_name, username):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
+    connection.commit()
+    connection.close()
+
+
+def sql_insert(string_value, value, user_id):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("UPDATE users SET " + str(string_value) + "= ? WHERE userID = ?;", [str(value), str(user_id)])
+    connection.commit()
+    connection.close()
+
+
+def check_if_user_saved(user_id):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
+
+    result = cursor.fetchall()
+    connection.close()
     if len(result) > 0:
         return result[0]
     else:
@@ -63,19 +75,22 @@ def check_if_user_saved(user_id):
 
 
 def get_playing_users(last_played):
-    cursor = sql_get_db_connection()
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>=?;", [str(last_played)])
-
     result = cursor.fetchone()
+    connection.close()
     return result[0]
 
 
 def get_last_players_list():
-    cursor = sql_get_db_connection()
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM users ORDER BY lastPlayed DESC LIMIT 10;")
     result = cursor.fetchall()
-
     return_text = ""
+
+    connection.close()
 
     for r in result:
         return_text += r[0] + " | " + r[2] + " | " + r[3] + " | @" + r[4] + " | Spiele: " + r[5] + " | Gew: " + r[6] + " (" + r[1] + ")\n"
@@ -83,19 +98,57 @@ def get_last_players_list():
 
 
 def user_data_changed(user_id, first_name, last_name, username):
-    cursor = sql_get_db_connection()
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
     result = cursor.fetchone()
-    print(result)
-    if str(result[0][2]) == first_name and str(result[0][3]) == last_name and str(result[0][3]) == username:
+
+    connection.close()
+
+    if result[2] == first_name and result[3] == last_name and result[4] == username:
         return False
 
     return True
 
 
 def set_user_data(user_id, first_name, last_name, username):
-    connection = sqlite3.connect("users.db")
+    connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
     connection.commit()
+    connection.close()
+
+
+def get_admins():
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM admins;")
+    admins = cursor.fetchall()
+    connection.close()
+
+    keys = ["user_id", "first_name", "username"]
+    admin_dict = []
+
+    for user in admins:
+        admin_dict.append(dict(zip(keys, user)))
+
+    return admin_dict
+
+
+def add_admin(user_id, first_name="", username=""):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO admins VALUES (?, ?, ?);", (user_id, first_name, username))
+    connection.commit()
+    connection.close()
+    return 0
+
+
+def rm_admin(user_id):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM admins WHERE userID=?", user_id)
+    connection.commit()
+    connection.close()
+    return 0
