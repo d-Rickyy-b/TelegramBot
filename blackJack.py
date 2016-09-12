@@ -162,12 +162,12 @@ class BlackJack(object):
         # ---------------------------------- Auswertung -----------------------------------------#
 
     def evaluation(self):
-        list_21 = [[]] * 0
-        list_busted = [[]] * 0
-        list_lower_21 = [[]] * 0
+        list_21 = []
+        list_busted = []
+        list_lower_21 = []
 
         for user in self.players:
-            tmplist = [] * 0
+            tmplist = []
             cv = user.cardvalue
             tmplist.extend((cv, user.first_name, user.number_of_cards, user.user_id))
             if cv > 21:
@@ -319,10 +319,10 @@ class BlackJack(object):
         self.game_handler_object = gamehandler
         self.message_adapter = MessageSenderAdapter(bot, chat_id)
         self.chat_id = chat_id
-        self.players = []*0
-        self.join_message_ids = []*0
+        self.players = []
+        self.join_message_ids = []
         self.cardvalue_dealer = 0
-        self.card_list_dealer = []*0
+        self.card_list_dealer = []
         self.lang_id = lang_id
         self.deck = CardDeck(lang_id)
         translate = lambda string: translation(string, lang_id)

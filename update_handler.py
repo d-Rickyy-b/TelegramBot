@@ -6,15 +6,15 @@ from sql_handler import check_if_user_saved, sql_write
 
 
 def get_updates(offset, bot):
-    updates = bot.get_updates(offset+1).wait()
-    returnlist = [[]]*0
+    updates = bot.get_updates(offset + 1).wait()
+    returnlist = []
 
-    if bool(updates) and updates :
+    if bool(updates) and updates:
         print("\n--- Processing updates: ---")
         for update in updates:
             if update is not None:
                 try:
-                    templist = []*0
+                    templist = []
                     user_id = update.message.sender.id
                     first_name = update.message.sender.first_name
                     last_name = update.message.sender.last_name
