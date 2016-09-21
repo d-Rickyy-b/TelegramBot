@@ -11,7 +11,8 @@ from blackJack import BlackJack
 from gamehandler import GameHandler
 from language import translation
 from messageSenderAdapter import MessageSenderAdapter
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, \
+    reset_stats
 from statistics import get_user_stats
 from update_handler import get_updates
 
@@ -144,9 +145,8 @@ class Main(object):
                 elif text.startswith("stats"):
                     self.message_adapter.send_new_message(chat_id, get_user_stats(user_id), message_id)
                 elif text.startswith("reset"):
-                    pass
                     # TODO erneute Abfrage ob Stats resettet werden sollen!
-                    # reset_stats(user_id)
+                    reset_stats(user_id)
 
                 elif text.startswith("!id"):
                     self.message_adapter.send_new_message(chat_id, str(chat_id))
