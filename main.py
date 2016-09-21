@@ -24,7 +24,7 @@ class Main(object):
     users = sql_connect()
     game_handler = GameHandler()
     GameList = game_handler.GameList
-    CommentList = [] * 0
+    CommentList = []
     DEV_ID = 24421134
     adminList = [DEV_ID, 58139255]
     message_adapter = MessageSenderAdapter(bot, 0)
@@ -181,7 +181,7 @@ class Main(object):
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
                     elif text.startswith("!ip"):
                         try:
-                            message_text = subprocess.check_output('/home/pi/getip.sh')
+                            message_text = subprocess.check_output('/home/rico/getip.sh')
                             self.message_adapter.send_new_message(chat_id, message_text)
                         except FileNotFoundError:
                             self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
