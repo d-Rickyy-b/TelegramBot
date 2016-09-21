@@ -181,6 +181,7 @@ class Main(object):
                                        "*!users*   -  show usercount\n" \
                                        "*!id*          -  show your Telegram ID\n" \
                                        "*!answer*  -  answer to a comment\n" \
+                                       "*!games*  -  list number of active games\n" \
                                        "*!admins*  -  show all admins\n" \
                                        "*!addadmin*  -  add a new admin\n" \
                                        "*!rmadmin*  -  remove existing admins"
@@ -196,6 +197,8 @@ class Main(object):
                         message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
                         self.message_adapter.send_new_message(chat_id, get_last_players_list())
+                    elif text.startswith("!games"):
+                        self.message_adapter.send_new_message(chat_id, len(self.game_handler.GameList))
                     elif text.startswith("!admins"):
                         admin_dict = get_admins()
                         admin_str = ""
