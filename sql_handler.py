@@ -120,6 +120,14 @@ def set_user_data(user_id, first_name, last_name, username):
     connection.close()
 
 
+def reset_stats(user_id):
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("UPDATE users set gamesPlayed=0, gamesWon=0, gamesTie=0, lastPlayed=0 WHERE userID=?;", user_id)
+    connection.commit()
+    connection.close()
+
+
 def get_admins():
     connection = sql_get_db_connection()
     cursor = connection.cursor()
