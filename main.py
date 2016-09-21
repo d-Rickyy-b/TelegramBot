@@ -11,7 +11,7 @@ from blackJack import BlackJack
 from gamehandler import GameHandler
 from language import translation
 from messageSenderAdapter import MessageSenderAdapter
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id
 from statistics import get_user_stats
 from update_handler import get_updates
 
@@ -26,7 +26,7 @@ class Main(object):
     GameList = game_handler.GameList
     CommentList = []
     DEV_ID = 24421134
-    adminList = [DEV_ID, 58139255]
+    adminList = []
     message_adapter = MessageSenderAdapter(bot, 0)
 
     keyboard_language = [
@@ -172,11 +172,14 @@ class Main(object):
 
                 elif user_id in self.adminList:
                     if text.startswith("!help"):
-                        message_text = "*!help*    -  print this help\n" \
-                                       "*!ip*         -  print ip address of the Pi\n" \
-                                       "*!users*  -  show usercount\n" \
-                                       "*!id*         -  show your Telegram ID\n" \
-                                       "*!answer* -  answer to a comment"
+                        message_text = "*!help*     -  print this help\n" \
+                                       "*!ip*          -  print ip address of the Pi\n" \
+                                       "*!users*   -  show usercount\n" \
+                                       "*!id*          -  show your Telegram ID\n" \
+                                       "*!answer*  -  answer to a comment\n" \
+                                       "*!admins*  -  show all admins\n" \
+                                       "*!addadmin*  -  add a new admin\n" \
+                                       "*!rmadmin*  -  remove existing admins"
 
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
                     elif text.startswith("!ip"):
@@ -189,14 +192,66 @@ class Main(object):
                         message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
                         self.message_adapter.send_new_message(chat_id, get_last_players_list())
+                    elif text.startswith("!admins"):
+                        admin_dict = get_admins()
+                        admin_str = ""
+
+                        for admin in admin_dict:
+                            admin_str += admin["first_name"] + " | " + str(admin["user_id"]) + " | "
+                            if admin["username"] is not None and admin["username"] is not "":
+                                admin_str += "@" + admin["username"]
+
+                            admin_str += "\n"
+
+                        self.message_adapter.send_new_message(chat_id, admin_str)
+
+                    elif text.startswith("!addadmin"):
+                        text_orig = str(text_orig[10:])
+                        args = text_orig.split()
+                        if len(args) < 3 and len(args) != 2:
+                            self.message_adapter.send_new_message(chat_id, "Usage: !addadmin <user_id> <first_name> <username>")
+                        elif len(args) == 2 or len(args) == 3:
+                            if len(args) == 2:
+                                a_user_id, a_first_name = args
+                                a_username = ""
+                            elif len(args) == 3:
+                                a_user_id, a_first_name, a_username = args
+                            else:
+                                a_user_id, a_first_name, a_username = ""
+
+                            return_val = add_admin(a_user_id, a_first_name, a_username)
+                            if return_val is not 0:
+                                self.message_adapter.send_new_message(chat_id, "There was an error adding an admin!")
+                            else:
+                                self.message_adapter.send_new_message(chat_id, "Admin added successfully!")
+                                self.adminList = get_admins_id()
+
+                    elif text.startswith("!rmadmin"):
+                        text = str(text[9:])
+                        if len(text) > 3 and len(text.split()) == 1:
+                            a_user_id = text.split()
+                            return_val = rm_admin(a_user_id)
+
+                            if return_val is not 0:
+                                self.message_adapter.send_new_message(chat_id, "There was an error removing an admin!")
+                            else:
+                                self.message_adapter.send_new_message(chat_id, "Admin removed successfully!")
+                                self.adminList = get_admins_id()
+                        else:
+                            self.message_adapter.send_new_message(chat_id, "Usage: !rmadmin <user_id>")
+
                 self.set_message_answered()
-        except:
+        except Exception as expt:
+            print(expt)
             self.set_message_answered()
             self.message_adapter.send_new_message(self.DEV_ID, "Bot Error:\n\nNachrichten konnten nicht ausgewertet werden!")
             traceback.print_exc()
 
     def __init__(self):
         print("Bot gestartet")
+        self.adminList = get_admins_id()
+        print("Admins are:")
+        print(self.adminList)
 
 main = Main()
 main.batch_run()
