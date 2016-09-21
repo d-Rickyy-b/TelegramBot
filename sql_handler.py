@@ -136,6 +136,21 @@ def get_admins():
     return admin_dict
 
 
+def get_admins_id():
+    tmp_list = []
+    connection = sql_get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT userID FROM admins;")
+    admins = cursor.fetchall()
+    connection.close()
+
+    for admin in admins:
+        for userID in admin:
+            tmp_list.append(userID)
+
+    return tmp_list
+
+
 def add_admin(user_id, first_name="", username=""):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
