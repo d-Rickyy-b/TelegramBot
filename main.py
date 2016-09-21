@@ -143,6 +143,10 @@ class Main(object):
                     self.message_adapter.hide_keyboard(chat_id)
                 elif text.startswith("stats"):
                     self.message_adapter.send_new_message(chat_id, get_user_stats(user_id), message_id)
+                elif text.startswith("reset"):
+                    pass
+                    # TODO erneute Abfrage ob Stats resettet werden sollen!
+                    # reset_stats(user_id)
 
                 elif text.startswith("!id"):
                     self.message_adapter.send_new_message(chat_id, str(chat_id))
