@@ -1,6 +1,6 @@
 __author__ = 'Rico'
-import configparser
 import codecs
+import configparser
 
 translations = configparser.ConfigParser()
 translations.read_file(codecs.open("translations.ini", "r", "UTF-8"))
