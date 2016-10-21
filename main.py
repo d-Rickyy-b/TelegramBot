@@ -32,7 +32,7 @@ class Main(object):
 
     keyboard_language = [
         ["Deutsch 🇩🇪", "English 🇺🇸"],
-        ["Português 🇧🇷", "Nederlands 🇳🇱"],
+        ["Português 🇧🇷", "Русский 🇷🇺", "Nederlands 🇳🇱"],
         ["Esperanto 🌍", "Español 🇪🇸"]]
 
     def add_to_game_list(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
@@ -139,6 +139,8 @@ class Main(object):
                     self.send_lang_changed_message(chat_id, message_id, "eo", user_id)
                 elif text.startswith("español"):
                     self.send_lang_changed_message(chat_id, message_id, "es", user_id)
+                elif text.startswith("русский"):
+                    self.send_lang_changed_message(chat_id, message_id, "ru", user_id)
 
                 elif text.startswith("hide"):
                     self.message_adapter.hide_keyboard(chat_id)

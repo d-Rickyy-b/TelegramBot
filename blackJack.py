@@ -15,7 +15,7 @@ class BlackJack(object):
     PRIVATE_CHAT = 0
     keyboard_language = [
         ["Deutsch 🇩🇪", "English 🇺🇸"],
-        ["Português 🇧🇷", "Nederlands 🇳🇱"],
+        ["Português 🇧🇷", "Русский 🇷🇺", "Nederlands 🇳🇱"],
         ["Esperanto 🌍", "Español 🇪🇸"]]
 
     game_running = False
