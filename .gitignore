@@ -1,0 +1,5 @@
+.idea
+.svn
+.git
+__pycache__
+*.db

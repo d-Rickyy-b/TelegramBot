@@ -105,7 +105,7 @@ class Main(object):
                         if user_id in self.CommentList:
                             self.CommentList.pop(self.CommentList.index(user_id))
 
-                elif text.startswith("cancel") and user_id in self.CommentList:
+                elif text.startswith(translation("cancel", lang_id).lower()) and user_id in self.CommentList:
                     self.message_adapter.hide_keyboard(chat_id, translation("cancelledMessage", lang_id))
                     self.CommentList.pop(self.CommentList.index(user_id))
 
@@ -149,6 +149,7 @@ class Main(object):
                 elif text.startswith("reset"):
                     # TODO erneute Abfrage ob Stats resettet werden sollen!
                     reset_stats(user_id)
+                    self.message_adapter.send_new_message("Statistics were reset!")
 
                 elif text.startswith("!id"):
                     self.message_adapter.send_new_message(chat_id, str(chat_id))
@@ -171,6 +172,7 @@ class Main(object):
                             msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
                     user_lang_id = str(check_if_user_saved(msg_chat_id)[2])
+                    # TODO throws TypeError when answering to the wrong message but doesn't crash
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
                     self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", user_lang_id) + "\n" +
                                                           translation("answerFromDev", user_lang_id) + " \n\n" + answer_text + "\n\n" +
@@ -220,13 +222,12 @@ class Main(object):
                         if len(args) < 3 and len(args) != 2:
                             self.message_adapter.send_new_message(chat_id, "Usage: !addadmin <user_id> <first_name> <username>")
                         elif len(args) == 2 or len(args) == 3:
+                            a_user_id = a_first_name = a_username = ""
+
                             if len(args) == 2:
                                 a_user_id, a_first_name = args
-                                a_username = ""
                             elif len(args) == 3:
                                 a_user_id, a_first_name, a_username = args
-                            else:
-                                a_user_id, a_first_name, a_username = ""
 
                             return_val = add_admin(a_user_id, a_first_name, a_username)
                             if return_val is not 0:
