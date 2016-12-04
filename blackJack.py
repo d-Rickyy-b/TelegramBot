@@ -288,11 +288,11 @@ class BlackJack(object):
             else:
                 self.message_adapter.send_new_message(self.chat_id, self.translate("noGame"), message_id=message_id)
 
-        elif str(command).startswith(self.translate("nomore")):
+        elif command.startswith(self.translate("nomore")):
             if user_id == self.players[self.current_player].user_id:
                 self.next_player()
 
-        elif self.game_type == self.GROUP_CHAT and str(command).startswith(self.translate("join")):
+        elif self.game_type == self.GROUP_CHAT and command.startswith(self.translate("join")):
             # todo one time keyboard
             if self.get_index_by_user_id(user_id) == -1:
                 self.add_player(user_id, first_name, message_id)
@@ -302,11 +302,11 @@ class BlackJack(object):
             if len(self.players) == 5:
                 self.start_game(message_id)
 
-        elif str(command).startswith("stop") or str(command).startswith(self.translate("stopCmd")):
+        elif command.startswith("stop") or command.startswith(self.translate("stopCmd")):
             if user_id == self.players[0].user_id:
                 self.game_handler_object.gl_remove(self.chat_id)
 
-        elif str(command).startswith("hide"):
+        elif command.startswith("hide"):
             self.message_adapter.hide_keyboard(self.chat_id)
         else:
             print("No matches!")
@@ -331,6 +331,7 @@ class BlackJack(object):
         self.keyboard_running = [[translate("keyboardItemOneMore"), translate("keyboardItemNoMore")], [translate("keyboardItemStop")]]
         self.keyboard_not_running = [[translate("keyboardItemStart")]]
 
+        # Add creator of the game to the "players" list
         self.add_player(user_id, first_name, message_id, silent=True)
         self.game_type = int(game_type)
 
