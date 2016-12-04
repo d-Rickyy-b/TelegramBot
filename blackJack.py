@@ -6,6 +6,7 @@ import time
 from cardDeck import CardDeck
 from messageSenderAdapter import MessageSenderAdapter
 from player import Player
+from dealer import Dealer
 from sql_handler import sql_insert
 from statistics import add_game_played, set_game_won
 
