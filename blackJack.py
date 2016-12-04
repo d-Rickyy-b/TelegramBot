@@ -287,7 +287,7 @@ class BlackJack(object):
             else:  # When game is singleplayer
                 self.message_adapter.send_new_message(self.chat_id, self.translate("alreadyAGame"), keyboard=self.keyboard_running, message_id=message_id)
 
-        elif str(command).startswith(self.translate("onemore")):
+        elif command.startswith(self.translate("onemore")):
             if self.game_running is True:
                 if user_id == self.players[self.current_player].user_id:
                     self.give_player_one()
