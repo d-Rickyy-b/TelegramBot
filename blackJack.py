@@ -51,7 +51,7 @@ class BlackJack(object):
 
         # ---------------------------------- give Player one -----------------------------------------#
 
-    # Gibt dem Spieler eine Karte
+    # gives player one card
     def give_player_one(self):
         card = self.deck.pick_one_card()
         cardvalue = self.deck.get_card_value(card)
@@ -264,12 +264,13 @@ class BlackJack(object):
 
     # Messages are analyzed here. Most function calls come from here
     def analyze_message(self, command, user_id, first_name, message_id):
+        command = str(command)
         print("analyze_message - " + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        if str(command).startswith("start") or str(command).startswith(self.translate("startCmd")):
+        if command.startswith("start") or command.startswith(self.translate("startCmd")):
             if self.game_type == self.GROUP_CHAT:
-                if len(self.players) >= 1:  # todo >=2 #wenn genügend Spieler dabei sind
-                    if self.game_running is False:  # wenn das Spiel noch nicht läuft
-                        if user_id == self.players[0].user_id:  # Wenn der Spielersteller starten schreibt
+                if len(self.players) >= 1:  # todo >=2 # when there are enough players
+                    if self.game_running is False:  # If the game isn't running yet
+                        if user_id == self.players[0].user_id:  # Only start game when the creator sends the start command
                             self.start_game(message_id)
                         else:
                             self.message_adapter.send_new_message(self.chat_id, self.translate("onlyGameCreator"), message_id=message_id)
