@@ -5,8 +5,9 @@ from sql_handler import sql_insert, sql_get_user
 
 
 def set_game_won(user_id):
-    games_won = int(sql_get_user(user_id)[7]) + 1
-    sql_insert("gamesWon", str(games_won), user_id)
+    if user_id > 0:
+        games_won = int(sql_get_user(user_id)[7]) + 1
+        sql_insert("gamesWon", str(games_won), user_id)
 
 
 def add_game_played(user_id):
