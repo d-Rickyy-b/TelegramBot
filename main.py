@@ -11,8 +11,7 @@ from blackJack import BlackJack
 from gamehandler import GameHandler
 from language import translation
 from messageSenderAdapter import MessageSenderAdapter
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, \
-    reset_stats
+from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
 from statistics import get_user_stats
 from update_handler import get_updates
 
@@ -82,7 +81,7 @@ class Main(object):
                 if user_data_changed(user_id, first_name, last_name, username):
                     set_user_data(user_id, first_name, last_name, username)
 
-                chat_index = self.game_handler.get_index(chat_id)  # get_index_by_chatid -> checkt ob Spiel im Chat vorhanden
+                chat_index = self.game_handler.get_index(chat_id)
 
                 if text.startswith("/"):
                     text = str(text[1:])
@@ -149,7 +148,7 @@ class Main(object):
                 elif text.startswith("reset"):
                     # TODO erneute Abfrage ob Stats resettet werden sollen!
                     reset_stats(user_id)
-                    self.message_adapter.send_new_message("Statistics were reset!")
+                    self.message_adapter.send_new_message(chat_id, "Statistics were reset!")
 
                 elif text.startswith("!id"):
                     self.message_adapter.send_new_message(chat_id, str(chat_id))

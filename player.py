@@ -28,6 +28,15 @@ class Player(object):
         return cards_string
 
     def __init__(self, user_id, first_name, deck):
+    def get_first_name(self):
+        return self.first_name
+
+    def get_cardvalue(self):
+        return self.cardvalue
+
+    def get_userid(self):
+        return self.user_id
+
         sql_insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
