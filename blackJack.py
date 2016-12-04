@@ -39,6 +39,13 @@ class BlackJack(object):
             i += 1
         return -1
 
+    def get_user_by_user_id(self, user_id):
+        for user in self.players:
+            if user.get_userid() == user_id:
+                return user
+
+        return None
+
     def next_player(self):
         if (self.current_player + 1) < len(self.players):
             self.current_player += 1
