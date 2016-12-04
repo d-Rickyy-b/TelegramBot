@@ -93,7 +93,7 @@ def get_last_players_list():
     connection.close()
 
     for r in result:
-        return_text += r[0] + " | " + r[2] + " | " + r[3] + " | @" + r[4] + " | Spiele: " + r[5] + " | Gew: " + r[6] + " (" + r[1] + ")\n"
+        return_text += str(r[0]) + " | " + str(r[2]) + " | " + str(r[3]) + " | @" + str(r[4]) + " | Spiele: " + str(r[5]) + " | Gew: " + str(r[6]) + " (" + str(r[1]) + ")\n"
     return return_text
 
 
