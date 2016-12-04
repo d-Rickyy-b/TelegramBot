@@ -334,6 +334,8 @@ class BlackJack(object):
         self.add_player(user_id, first_name, message_id, silent=True)
         self.game_type = int(game_type)
 
+        self.dealer = Dealer(self.translate("dealerName"), self.deck)
+
         if self.game_type == self.PRIVATE_CHAT:
             self.game_running = True
             add_game_played(user_id)
