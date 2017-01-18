@@ -159,7 +159,7 @@ class Main(object):
                             msg_chat_id = self.left_msgs[0][9]
                             answer_text = str(text_orig)
                         except:
-                            msg_chat_id = "DEV_ID"
+                            msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
                     else:
                         try:
