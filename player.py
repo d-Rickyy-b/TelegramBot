@@ -27,7 +27,6 @@ class Player(object):
                 cards_string += ", "
         return cards_string
 
-    def __init__(self, user_id, first_name, deck):
     def get_first_name(self):
         return self.first_name
 
@@ -36,7 +35,8 @@ class Player(object):
 
     def get_userid(self):
         return self.user_id
-
+    
+    def __init__(self, user_id, first_name, deck):
         sql_insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
