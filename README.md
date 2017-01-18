@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/d-Rickyy-b/TelegramBot.svg?branch=master)](https://travis-ci.org/d-Rickyy-b/TelegramBot)
+
 # TelegramBot
 This is the code for my Telegram Bot. You can find it here: https://telegram.me/BlackJackBot
 
