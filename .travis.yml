@@ -11,4 +11,9 @@ install:
 script:
   - pwd
   - python -m compileall ./
-  - pychecker ./*.py
+  
+#  pychecker doesn't work as expected for me. Until now i'm going with just syntax checking all the files.
+#  - pychecker ./*.py
+
+notifications:
+  email: false
