@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.4"
+# command to install dependencies
+install: pip install twx.botapi
+
+# command to run tests
+script: python -m py_compile main.py
+
