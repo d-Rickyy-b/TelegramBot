@@ -1,9 +1,14 @@
 language: python
+sudo: require
 python:
   - "3.4"
 # command to install dependencies
-install: pip install twx.botapi
+install:
+  - pip install twx.botapi
+  - sudo apt-get install pychecker
 
 # command to run tests
-script: python -m py_compile main.py
-
+script:
+  - pwd
+  - python -m compileall ./
+  - pychecker ./*.py
