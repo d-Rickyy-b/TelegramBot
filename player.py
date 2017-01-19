@@ -5,8 +5,6 @@ from sql_handler import sql_insert
 
 
 class Player(object):
-    credits = 1000  # TODO for testing purpose
-
     def give_card(self, card, value):
         self.cards.append(card)
         self.cardvalue += value
@@ -29,17 +27,6 @@ class Player(object):
                 cards_string += ", "
         return cards_string
 
-    def set_bet(self, bet):
-        if self.credits >= bet:
-            self.credits -= bet
-            self.bet = bet
-        else:
-            self.bet = self.credits
-            self.credits = 0
-
-    def get_bet(self):
-        return self.bet
-
     def get_first_name(self):
         return self.first_name
 
@@ -48,8 +35,8 @@ class Player(object):
 
     def get_userid(self):
         return self.user_id
-
-    def __init__(self, user_id, first_name, deck, bet=0):
+    
+    def __init__(self, user_id, first_name, deck):
         sql_insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
@@ -58,4 +45,3 @@ class Player(object):
         self.has_ace = False
         self.cards = [] * 0
         self.deck = deck
-        self.bet = bet

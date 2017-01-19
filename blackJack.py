@@ -4,9 +4,9 @@ import datetime
 import time
 
 from cardDeck import CardDeck
-from dealer import Dealer
 from messageSenderAdapter import MessageSenderAdapter
 from player import Player
+from dealer import Dealer
 from sql_handler import sql_insert
 from statistics import add_game_played, set_game_won
 
@@ -163,7 +163,6 @@ class BlackJack(object):
         self.dealers_first_turn()
         for p in self.players:
             add_game_played(p.user_id)
-
         self.players_first_turn()
 
         # ---------------------------------- Auswertung -----------------------------------------#
@@ -266,6 +265,7 @@ class BlackJack(object):
         self.keyboard_running = [[self.translate("keyboardItemOneMore"), self.translate("keyboardItemNoMore")], [self.translate("keyboardItemStop")]]
         self.keyboard_not_running = [[self.translate("keyboardItemStart")]]
 
+
     # ---------------------------------- Analyzing -----------------------------------------#
 
     # Messages are analyzed here. Most function calls come from here
@@ -277,12 +277,6 @@ class BlackJack(object):
                 if len(self.players) >= 1:  # todo >=2 # when there are enough players
                     if self.game_running is False:  # If the game isn't running yet
                         if user_id == self.players[0].user_id:  # Only start game when the creator sends the start command
-                            print("Bets are:")
-                            current_credits = 0
-                            for Aplayer in self.players:
-                                current_credits += Aplayer.get_bet()
-
-                            print(current_credits)
                             self.start_game(message_id)
                         else:
                             self.message_adapter.send_new_message(self.chat_id, self.translate("onlyGameCreator"), message_id=message_id)
@@ -292,16 +286,7 @@ class BlackJack(object):
                     self.message_adapter.send_new_message(self.chat_id, self.translate("notEnoughPlayers"), message_id=message_id)
             else:  # When game is singleplayer
                 self.message_adapter.send_new_message(self.chat_id, self.translate("alreadyAGame"), keyboard=self.keyboard_running, message_id=message_id)
-        elif command.startswith("bet"):
-            try:
-                value = int(command[4:])
-                player = self.get_user_by_user_id(user_id)
-                if player:
-                    player.set_bet(value)
-                    self.message_adapter.send_new_message(self.chat_id, player.get_first_name() + "'s bet about " + str(player.get_bet()) + " credits was successfully set!", message_id=message_id)
-            except TypeError as typeerror:
-                print("Very bad typeError")
-                print(typeerror)
+
         elif command.startswith(self.translate("onemore")):
             if self.game_running is True:
                 if user_id == self.players[self.current_player].user_id:
