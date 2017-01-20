@@ -3,7 +3,7 @@ import codecs
 import configparser
 
 translations = configparser.ConfigParser()
-translations.read_file(codecs.open("translations.ini", "r", "UTF-8"))
+translations.read_file(codecs.open("lang/translations.ini", "r", "UTF-8"))
 
 
 # translation returns the translation for a specific string

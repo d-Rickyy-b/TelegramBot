@@ -1,7 +1,7 @@
 __author__ = 'Rico'
 from datetime import datetime
 
-from sql_handler import sql_insert, sql_get_user
+from database.sql_handler import sql_insert, sql_get_user
 
 
 def set_game_won(user_id):

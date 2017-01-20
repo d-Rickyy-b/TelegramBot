@@ -1,6 +1,6 @@
 __author__ = 'Rico'
 
-from language import translation
+from lang.language import translation
 
 
 class CardDeck:

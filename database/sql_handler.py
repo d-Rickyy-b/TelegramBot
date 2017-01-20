@@ -4,7 +4,7 @@ import sqlite3
 
 
 def sql_get_db_connection():
-    connection = sqlite3.connect("users.db")
+    connection = sqlite3.connect("database/users.db")
     connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
     return connection
 
