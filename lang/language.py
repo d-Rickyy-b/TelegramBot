@@ -10,8 +10,8 @@ translations.read_file(codecs.open("lang/translations.ini", "r", "UTF-8"))
 def translation(string, language):
     if language in translations and string in translations[language]:
         return translations[language][string]
-    elif language == "pt":
-        return translations[pt_BR][string]
+    elif language == "br":
+        return translations["pt_BR"][string]
     elif "en" in translations and string in translations["en"]:
         return translations["en"][string]
     return string
