@@ -5,15 +5,15 @@ import subprocess
 import time
 import traceback
 
+from app.gamehandler import GameHandler
+from app.messageSenderAdapter import MessageSenderAdapter
 from twx.botapi import TelegramBot
 
-from blackJack import BlackJack
-from gamehandler import GameHandler
-from language import translation
-from messageSenderAdapter import MessageSenderAdapter
-from sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
-from statistics import get_user_stats
-from update_handler import get_updates
+from app.update_handler import get_updates
+from database.sql_handler import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
+from database.statistics import get_user_stats
+from game.blackJack import BlackJack
+from lang.language import translation
 
 
 class Main(object):

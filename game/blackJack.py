@@ -3,12 +3,13 @@ __author__ = 'Rico'
 import datetime
 import time
 
-from cardDeck import CardDeck
-from messageSenderAdapter import MessageSenderAdapter
-from player import Player
-from dealer import Dealer
-from sql_handler import sql_insert
-from statistics import add_game_played, set_game_won
+from game.dealer import Dealer
+from game.player import Player
+
+from app.messageSenderAdapter import MessageSenderAdapter
+from database.sql_handler import sql_insert
+from database.statistics import add_game_played, set_game_won
+from game.cardDeck import CardDeck
 
 
 class BlackJack(object):
@@ -321,7 +322,7 @@ class BlackJack(object):
 
     # When game is being initialized
     def __init__(self, chat_id, user_id, lang_id, game_type, first_name, gamehandler, message_id, bot):
-        from language import translation
+        from lang.language import translation
         print("BlackJack_init - " + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         self.game_handler_object = gamehandler
         self.message_adapter = MessageSenderAdapter(bot, chat_id)

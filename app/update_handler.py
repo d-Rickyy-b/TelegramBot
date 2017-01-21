@@ -3,7 +3,7 @@ __author__ = 'Rico'
 import datetime
 import re
 
-from sql_handler import check_if_user_saved, sql_write
+from database.sql_handler import check_if_user_saved, sql_write
 
 
 def get_updates(offset, bot):
