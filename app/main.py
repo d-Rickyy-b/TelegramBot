@@ -131,7 +131,7 @@ class Main(object):
                 elif text.startswith("english"):
                     self.send_lang_changed_message(chat_id, message_id, "en", user_id)
                 elif text.startswith("português"):
-                    self.send_lang_changed_message(chat_id, message_id, "br", user_id)
+                    self.send_lang_changed_message(chat_id, message_id, "pt_BR", user_id)
                 elif text.startswith("nederlands"):
                     self.send_lang_changed_message(chat_id, message_id, "nl", user_id)
                 elif text.startswith("esperanto"):
