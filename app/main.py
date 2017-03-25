@@ -10,7 +10,7 @@ from app.messageSenderAdapter import MessageSenderAdapter
 from twx.botapi import TelegramBot
 
 from app.update_handler import get_updates
-from database.db_wrapper import sql_connect, sql_insert, check_if_user_saved, get_playing_users, get_last_players_list, user_data_changed, set_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
+from database.db_wrapper import sql_connect, insert, is_user_saved, get_playing_users, get_last_players_list, user_data_changed, update_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
 from database.statistics import get_user_stats
 from game.blackJack import BlackJack
 from lang.language import translation
@@ -46,7 +46,7 @@ class Main(object):
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         self.message_adapter.send_new_message(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
-        sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
+        insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
 
     def batch_run(self):
         while True:
@@ -75,11 +75,11 @@ class Main(object):
                 first_name = self.left_msgs[0][2]
                 last_name = self.left_msgs[0][3]
                 username = self.left_msgs[0][8]
-                lang_id = str(check_if_user_saved(user_id)[2])
+                lang_id = str(is_user_saved(user_id)[2])
                 game_type = self.left_msgs[0][5]
 
                 if user_data_changed(user_id, first_name, last_name, username):
-                    set_user_data(user_id, first_name, last_name, username)
+                    update_user_data(user_id, first_name, last_name, username)
 
                 chat_index = self.game_handler.get_index(chat_id)
 
@@ -172,7 +172,7 @@ class Main(object):
                             self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
                             msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
-                    user_lang_id = str(check_if_user_saved(msg_chat_id)[2])
+                    user_lang_id = str(is_user_saved(msg_chat_id)[2])
                     # TODO throws TypeError when answering to the wrong message but doesn't crash
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
                     self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", user_lang_id) + "\n" +
@@ -199,9 +199,10 @@ class Main(object):
                         except FileNotFoundError:
                             self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
                     elif text.startswith("!users"):
+                        # message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
                         message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
-                        self.message_adapter.send_new_message(chat_id, get_last_players_list())
+                        # self.message_adapter.send_new_message(chat_id, get_last_players_list())
                     elif text.startswith("!games"):
                         self.message_adapter.send_new_message(chat_id, len(self.game_handler.GameList))
                     elif text.startswith("!admins"):

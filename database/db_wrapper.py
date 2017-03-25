@@ -23,7 +23,7 @@ def sql_connect():
     return temp_list
 
 
-def sql_get_user(user_id):
+def get_user(user_id):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
@@ -36,7 +36,7 @@ def sql_get_user(user_id):
         return []
 
 
-def sql_get_all_users():
+def get_all_users():
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users;")
@@ -45,7 +45,7 @@ def sql_get_all_users():
     return all_users
 
 
-def sql_write(user_id, lang_id, first_name, last_name, username):
+def add_user(user_id, lang_id, first_name, last_name, username):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
@@ -53,7 +53,7 @@ def sql_write(user_id, lang_id, first_name, last_name, username):
     connection.close()
 
 
-def sql_insert(string_value, value, user_id):
+def insert(string_value, value, user_id):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET " + str(string_value) + "= ? WHERE userID = ?;", [str(value), str(user_id)])
@@ -61,7 +61,7 @@ def sql_insert(string_value, value, user_id):
     connection.close()
 
 
-def check_if_user_saved(user_id):
+def is_user_saved(user_id):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
@@ -112,7 +112,7 @@ def user_data_changed(user_id, first_name, last_name, username):
     return True
 
 
-def set_user_data(user_id, first_name, last_name, username):
+def update_user_data(user_id, first_name, last_name, username):
     connection = sql_get_db_connection()
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))

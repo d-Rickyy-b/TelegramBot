@@ -3,7 +3,7 @@ __author__ = 'Rico'
 import datetime
 import re
 
-from database.db_wrapper import check_if_user_saved, sql_write
+from database.db_wrapper import is_user_saved, add_user
 
 
 def get_updates(offset, bot):
@@ -43,8 +43,8 @@ def get_updates(offset, bot):
                         last_name = ""
 
                     not_saved = -1
-                    if check_if_user_saved(user_id) == not_saved:
-                        sql_write(user_id, "en", first_name, last_name, username)  # add new user to db
+                    if is_user_saved(user_id) == not_saved:
+                        add_user(user_id, "en", first_name, last_name, username)  # add new user to db
 
                     if chat_id > 0:
                         chat_type = "0"
