@@ -1,7 +1,7 @@
 __author__ = 'Rico'
 from time import time
 
-from database.sql_handler import sql_insert
+from database.db_wrapper import sql_insert
 
 
 class Player(object):

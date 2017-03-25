@@ -7,7 +7,7 @@ from game.dealer import Dealer
 from game.player import Player
 
 from app.messageSenderAdapter import MessageSenderAdapter
-from database.sql_handler import sql_insert
+from database.db_wrapper import sql_insert
 from database.statistics import add_game_played, set_game_won
 from game.cardDeck import CardDeck
 
