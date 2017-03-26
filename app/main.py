@@ -98,10 +98,10 @@ class Main(object):
                     text = str(text[7:])
                     if ((len(text) == 13 and text.startswith("@blackjackbot")) or (len(text) == 0)) or ((len(text) == 11 and text.startswith("@mytest_bot")) or (len(text) == 0)):
                         if user_id not in self.CommentList:
-                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, keyboard=keyboard_cancel, force_reply=None)
+                            self.message_adapter.send_new_message(chat_id, translation("sendCommentNow", lang_id), message_id=message_id, keyboard=keyboard_cancel)
                             self.CommentList.append(user_id)
                     else:
-                        self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running, force_reply=None)
+                        self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), keyboard=keyboard_not_running)
                         self.message_adapter.send_new_message(self.DEV_ID, "Nutzer Kommentar:\n\n" + str(
                             text_orig[7:] + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
                         if user_id in self.CommentList:
@@ -112,7 +112,7 @@ class Main(object):
                     self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif user_id in self.CommentList:
-                    self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), message_id=message_id, keyboard=keyboard_not_running, force_reply=None)
+                    self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), message_id=message_id, keyboard=keyboard_not_running)
                     self.message_adapter.send_new_message(self.DEV_ID,
                                 "Nutzer Kommentar:\n\n" + str(text_orig + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
                     self.CommentList.pop(self.CommentList.index(user_id))
