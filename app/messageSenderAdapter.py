@@ -38,7 +38,7 @@ class MessageSenderAdapter(object):
     def hide_keyboard(self, chat_id, text=None):
         reply_markup = ReplyKeyboardHide.create()
         if text is None:
-            text = "👍"#Thumbs up emoji
+            text = "👍"  # Thumbs up emoji
         self.bot.send_message(chat_id, text, reply_markup=reply_markup).wait()
         self.clear_message()
 
