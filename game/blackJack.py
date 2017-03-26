@@ -145,7 +145,7 @@ class BlackJack(object):
     def dealers_first_turn(self):
         card = self.deck.pick_one_card()
         cardvalue = self.deck.get_card_value(card)
-        self.dealer.give_card(cardvalue, cardvalue)
+        self.dealer.give_card(card, cardvalue)
         text = ""
 
         if self.game_type == self.PRIVATE_CHAT:
