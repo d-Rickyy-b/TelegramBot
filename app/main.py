@@ -10,7 +10,7 @@ from app.messageSenderAdapter import MessageSenderAdapter
 from twx.botapi import TelegramBot
 
 from app.update_handler import get_updates
-from database.db_wrapper import sql_connect, insert, is_user_saved, get_playing_users, get_last_players_list, user_data_changed, update_user_data, get_admins, add_admin, rm_admin, get_admins_id, reset_stats
+from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJack import BlackJack
 from lang.language import translation
@@ -46,7 +46,8 @@ class Main(object):
 
     def send_lang_changed_message(self, chat_id, message_id, lang_id, user_id):
         self.message_adapter.send_new_message(chat_id, translation("langChanged", lang_id), message_id=message_id, keyboard=[[translation("keyboardItemStart", lang_id)]])
-        insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
+        db = DBwrapper.get_instance()
+        db.insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
 
     def batch_run(self):
         while True:
@@ -69,17 +70,19 @@ class Main(object):
                     text_orig = "noText"
                     text = ""
 
+                db = DBwrapper.get_instance()
+
                 user_id = self.left_msgs[0][0]
                 chat_id = self.left_msgs[0][6]
                 message_id = self.left_msgs[0][7]
                 first_name = self.left_msgs[0][2]
                 last_name = self.left_msgs[0][3]
                 username = self.left_msgs[0][8]
-                lang_id = str(is_user_saved(user_id)[2])
+                lang_id = str(db.get_lang_id(user_id))
                 game_type = self.left_msgs[0][5]
 
-                if user_data_changed(user_id, first_name, last_name, username):
-                    update_user_data(user_id, first_name, last_name, username)
+                if db.user_data_changed(user_id, first_name, last_name, username):
+                    db.update_user_data(user_id, first_name, last_name, username)
 
                 chat_index = self.game_handler.get_index(chat_id)
 
@@ -149,7 +152,7 @@ class Main(object):
                     self.message_adapter.send_new_message(chat_id, get_user_stats(user_id), message_id)
                 elif text.startswith("reset"):
                     # TODO erneute Abfrage ob Stats resettet werden sollen!
-                    reset_stats(user_id)
+                    db.reset_stats(user_id)
                     self.message_adapter.send_new_message(chat_id, "Statistics were reset!")
 
                 elif text.startswith("!id"):
@@ -172,7 +175,7 @@ class Main(object):
                             self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
                             msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
-                    user_lang_id = str(is_user_saved(msg_chat_id)[2])
+                    user_lang_id = str(db.is_user_saved(msg_chat_id)[2])
                     # TODO throws TypeError when answering to the wrong message but doesn't crash
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
                     self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", user_lang_id) + "\n" +
@@ -200,13 +203,13 @@ class Main(object):
                             self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
                     elif text.startswith("!users"):
                         # message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
-                        message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
+                        message_text = "*Last 24 hours:*\n👥 " + str(db.get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(db.get_playing_users(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
                         # self.message_adapter.send_new_message(chat_id, get_last_players_list())
                     elif text.startswith("!games"):
                         self.message_adapter.send_new_message(chat_id, len(self.game_handler.GameList))
                     elif text.startswith("!admins"):
-                        admin_dict = get_admins()
+                        admin_dict = db.get_admins()
                         admin_str = ""
 
                         for admin in admin_dict:
@@ -231,24 +234,24 @@ class Main(object):
                             elif len(args) == 3:
                                 a_user_id, a_first_name, a_username = args
 
-                            return_val = add_admin(a_user_id, a_first_name, a_username)
+                            return_val = db.add_admin(a_user_id, a_first_name, a_username)
                             if return_val is not 0:
                                 self.message_adapter.send_new_message(chat_id, "There was an error adding an admin!")
                             else:
                                 self.message_adapter.send_new_message(chat_id, "Admin added successfully!")
-                                self.adminList = get_admins_id()
+                                self.adminList = db.get_admins_id()
 
                     elif text.startswith("!rmadmin"):
                         text = str(text[9:])
                         if len(text) > 3 and len(text.split()) == 1:
                             a_user_id = text.split()
-                            return_val = rm_admin(a_user_id)
+                            return_val = db.rm_admin(a_user_id)
 
                             if return_val is not 0:
                                 self.message_adapter.send_new_message(chat_id, "There was an error removing an admin!")
                             else:
                                 self.message_adapter.send_new_message(chat_id, "Admin removed successfully!")
-                                self.adminList = get_admins_id()
+                                self.adminList = db.get_admins_id()
                         else:
                             self.message_adapter.send_new_message(chat_id, "Usage: !rmadmin <user_id>")
 
@@ -261,7 +264,8 @@ class Main(object):
 
     def __init__(self):
         print("Bot gestartet")
-        self.adminList = get_admins_id()
+        db = DBwrapper.get_instance()
+        self.adminList = db.get_admins_id()
         print("Admins are:")
         print(self.adminList)
 

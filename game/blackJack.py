@@ -7,7 +7,7 @@ from game.dealer import Dealer
 from game.player import Player
 
 from app.messageSenderAdapter import MessageSenderAdapter
-from database.db_wrapper import insert
+from database.db_wrapper import DBwrapper
 from database.statistics import add_game_played, set_game_won
 from game.cardDeck import CardDeck
 
@@ -257,10 +257,11 @@ class BlackJack(object):
     # ---------------------------------- Change Language -----------------------------------------#
 
     def change_language(self, lang_id, message_id, user_id):
+        db = DBwrapper.get_instance()
         self.message_adapter.send_new_message(self.chat_id, self.translate("langChanged"),
                                               keyboard=[[self.translate("keyboardItemOneMore"), self.translate("keyboardItemNoMore")], [self.translate("keyboardItemStart")]],
                                               message_id=message_id)
-        insert("languageID", lang_id, user_id)
+        db.insert("languageID", lang_id, user_id)
         self.lang_id = lang_id
 
         self.keyboard_running = [[self.translate("keyboardItemOneMore"), self.translate("keyboardItemNoMore")], [self.translate("keyboardItemStop")]]

@@ -1,18 +1,20 @@
 __author__ = 'Rico'
 from datetime import datetime
 
-from database.db_wrapper import insert, get_user
+from database.db_wrapper import DBwrapper
 
 
 def set_game_won(user_id):
     if user_id > 0:
-        games_won = int(get_user(user_id)[7]) + 1
-        insert("gamesWon", str(games_won), user_id)
+        db = DBwrapper.get_instance()
+        games_won = int(db.get_user(user_id)[6]) + 1
+        db.insert("gamesWon", str(games_won), user_id)
 
 
 def add_game_played(user_id):
-    games_played = int(get_user(user_id)[6]) + 1
-    insert("gamesPlayed", str(games_played), user_id)
+    db = DBwrapper.get_instance()
+    games_played = int(db.get_user(user_id)[5]) + 1
+    db.insert("gamesPlayed", str(games_played), user_id)
 
 
 def get_stats(percentage):
@@ -27,6 +29,8 @@ def get_stats(percentage):
 
 def get_user_stats(user_id):
     user = get_user(user_id)
+    db = DBwrapper.get_instance()
+    user = db.get_user(user_id)
     played_games = 1
     if int(user[6]) > 0:
         played_games = user[6]

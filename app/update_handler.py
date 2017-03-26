@@ -3,7 +3,7 @@ __author__ = 'Rico'
 import datetime
 import re
 
-from database.db_wrapper import is_user_saved, add_user
+from database.db_wrapper import DBwrapper
 
 
 def get_updates(offset, bot):
@@ -15,6 +15,7 @@ def get_updates(offset, bot):
         for update in updates:
             if update is not None:
                 try:
+                    db = DBwrapper.get_instance()
                     templist = []
                     user_id = update.message.sender.id
                     first_name = update.message.sender.first_name
@@ -42,9 +43,8 @@ def get_updates(offset, bot):
                     if last_name is None:
                         last_name = ""
 
-                    not_saved = -1
-                    if is_user_saved(user_id) == not_saved:
-                        add_user(user_id, "en", first_name, last_name, username)  # add new user to db
+                    if db.is_user_saved(user_id) == False:
+                        db.add_user(user_id, "en", first_name, last_name, username)  # add new user to db
 
                     if chat_id > 0:
                         chat_type = "0"

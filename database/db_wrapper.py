@@ -1,177 +1,142 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Rico'
+import os
 import sqlite3
 
-
-def sql_get_db_connection():
-    connection = sqlite3.connect("database/users.db")
-    connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-    return connection
+__author__ = 'Rico'
 
 
-def sql_connect():
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT rowid, * FROM users")
-    temp_list = []
+class DBwrapper(object):
+    class __DBwrapper(object):
+        dir_path = os.path.dirname(os.path.abspath(__file__))
 
-    result = cursor.fetchall()
-    for r in result:
-        temp_list.append(list(r))
+        def __init__(self):
+            database_path = os.path.join(self.dir_path, "users.db")
+            print(database_path)
+            self.connection = sqlite3.connect(database_path)
+            self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+            self.cursor = self.connection.cursor()
 
-    connection.close()
-    return temp_list
+        def get_user(self, user_id):
+            self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
+            result = self.cursor.fetchone()
+            if len(result) > 0:
+                return result
+            else:
+                return []
 
-def get_user(user_id):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
+        def get_played_games(self, user_id):
+            self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
 
-    result = cursor.fetchall()
-    connection.close()
-    if len(result) > 0:
-        return result[0]
-    else:
-        return []
+            result = self.cursor.fetchone()
+            if len(result) > 0:
+                return result[0]
+            else:
+                return 0
 
+        def get_all_users(self):
+            self.cursor.execute("SELECT rowid, * FROM users;")
+            return self.cursor.fetchall()
 
-def get_all_users():
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT rowid, * FROM users;")
-    all_users = cursor.fetchall()
-    connection.close()
-    return all_users
+        def get_lang_id(self, user_id):
+            self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
+            result = self.cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                return "en"
 
+        def write(self, user_id, lang_id, first_name, last_name, username):
+            try:
+                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
+                self.connection.commit()
+            except sqlite3.IntegrityError:
+                # print("User already exists")
+                pass
 
-def add_user(user_id, lang_id, first_name, last_name, username):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
-    connection.commit()
-    connection.close()
+        def insert(self, column_name, value, user_id):
+            self.cursor.execute("UPDATE users SET " + str(column_name) + "= ? WHERE userID = ?;",
+                                [str(value), str(user_id)])
+            self.connection.commit()
 
+        def is_user_saved(self, user_id):
+            self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
-def insert(string_value, value, user_id):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("UPDATE users SET " + str(string_value) + "= ? WHERE userID = ?;", [str(value), str(user_id)])
-    connection.commit()
-    connection.close()
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return True
+            else:
+                return False
 
+        def user_data_changed(self, user_id, first_name, last_name, username):
+            self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
-def is_user_saved(user_id):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
+            result = self.cursor.fetchone()
 
-    result = cursor.fetchall()
-    connection.close()
-    if len(result) > 0:
-        return result[0]
-    else:
-        return -1
+            # check if user is saved
+            if result:
+                if result[2] == first_name and result[3] == last_name and result[4] == username:
+                    return False
+                return True
 
+        def update_user_data(self, user_id, first_name, last_name, username):
+            self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
+            self.connection.commit()
 
-def get_playing_users(last_played):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>=?;", [str(last_played)])
-    result = cursor.fetchone()
-    connection.close()
-    return result[0]
+        def reset_stats(self, user_id):
+            self.cursor.execute("UPDATE users SET gamesPlayed='0', gamesWon='0', gamesTie='0', lastPlayed='0' WHERE userID=?;", [str(user_id)])
+            self.connection.commit()
 
+        def get_playing_users_count(self, last_played):
+            self.cursor.execute("SELECT COUNT(*) FROM users WHERE lastPlayed>=?;", [str(last_played)])
+            result = self.cursor.fetchone()
+            return result[0]
 
-def get_last_players_list():
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users ORDER BY lastPlayed DESC LIMIT 10;")
-    result = cursor.fetchall()
-    return_text = ""
+        def get_admins(self):
+            self.cursor.execute("SELECT * FROM admins;")
+            admins = self.cursor.fetchall()
 
-    connection.close()
+            keys = ["user_id", "first_name", "username"]
+            admin_dict = []
 
-    for r in result:
-        return_text += str(r[0]) + " | " + str(r[2]) + " | " + str(r[3]) + " | @" + str(r[4]) + " | Spiele: " + str(r[5]) + " | Gew: " + str(r[6]) + " (" + str(r[1]) + ")\n"
-    return return_text
+            for user in admins:
+                admin_dict.append(dict(zip(keys, user)))
 
+            return admin_dict
 
-def user_data_changed(user_id, first_name, last_name, username):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
+        def get_admins_id(self):
+            tmp_list = []
+            self.cursor.execute("SELECT userID FROM admins;")
+            admins = self.cursor.fetchall()
 
-    result = cursor.fetchone()
+            for admin in admins:
+                for userID in admin:
+                    tmp_list.append(userID)
 
-    connection.close()
+            return tmp_list
 
-    if result[2] == first_name and result[3] == last_name and result[4] == username:
-        return False
+        def add_admin(self, user_id, first_name="", username=""):
+            self.cursor.execute("INSERT INTO admins VALUES (?, ?, ?);", (user_id, first_name, username))
+            self.connection.commit()
+            return 0
 
-    return True
+        def rm_admin(self, user_id):
+            self.cursor.execute("DELETE FROM admins WHERE userID=?", user_id)
+            self.connection.commit()
+            return 0
 
+        def close_conn(self):
+            self.connection.close()
 
-def update_user_data(user_id, first_name, last_name, username):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
-    connection.commit()
-    connection.close()
+    instance = None
 
+    def __init__(self):
+        if not DBwrapper.instance:
+            DBwrapper.instance = DBwrapper.__DBwrapper()
 
-def reset_stats(user_id):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("UPDATE users SET gamesPlayed='0', gamesWon='0', gamesTie='0', lastPlayed='0' WHERE userID=?;", [str(user_id)])
-    connection.commit()
-    connection.close()
+    @staticmethod
+    def get_instance():
+        if not DBwrapper.instance:
+            DBwrapper.instance = DBwrapper.__DBwrapper()
 
-
-def get_admins():
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM admins;")
-    admins = cursor.fetchall()
-    connection.close()
-
-    keys = ["user_id", "first_name", "username"]
-    admin_dict = []
-
-    for user in admins:
-        admin_dict.append(dict(zip(keys, user)))
-
-    return admin_dict
-
-
-def get_admins_id():
-    tmp_list = []
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT userID FROM admins;")
-    admins = cursor.fetchall()
-    connection.close()
-
-    for admin in admins:
-        for userID in admin:
-            tmp_list.append(userID)
-
-    return tmp_list
-
-
-def add_admin(user_id, first_name="", username=""):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO admins VALUES (?, ?, ?);", (user_id, first_name, username))
-    connection.commit()
-    connection.close()
-    return 0
-
-
-def rm_admin(user_id):
-    connection = sql_get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM admins WHERE userID=?", user_id)
-    connection.commit()
-    connection.close()
-    return 0
+        return DBwrapper.instance

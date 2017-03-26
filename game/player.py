@@ -1,7 +1,7 @@
 __author__ = 'Rico'
 from time import time
 
-from database.db_wrapper import insert
+from database.db_wrapper import DBwrapper
 
 
 class Player(object):
@@ -37,7 +37,8 @@ class Player(object):
         return self.user_id
     
     def __init__(self, user_id, first_name, deck):
-        insert("lastPlayed", int(time()), user_id)
+        db = DBwrapper.get_instance()
+        db.insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
         self.first_name = first_name
