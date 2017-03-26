@@ -21,7 +21,6 @@ class Main(object):
     bot = TelegramBot(BOT_TOKEN)
     left_msgs = [[]] * 0
     offset = 0
-    users = sql_connect() #TODO high memory usage due to in-memory storage without usage
     game_handler = GameHandler()
     GameList = game_handler.GameList
     CommentList = []
