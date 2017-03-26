@@ -28,14 +28,13 @@ def get_stats(percentage):
 
 
 def get_user_stats(user_id):
-    user = get_user(user_id)
     db = DBwrapper.get_instance()
     user = db.get_user(user_id)
     played_games = 1
-    if int(user[6]) > 0:
-        played_games = user[6]
-    statistics_string = "Here are your statistics  📊:\n\nPlayed Games: " + str(user[6]) + "\nWon Games : " + str(user[7]) + \
-                        "\nLast Played: " + datetime.fromtimestamp(int(user[9])).strftime('%d.%m.%y %H:%M') + " CET" + \
-                        "\n\n" + get_stats(round(float(user[7]) / float(played_games), 4) * 100) + "\n\nWinning rate: " + \
-                        '{percent:.2%}'.format(percent=float(user[7]) / float(played_games))
+    if int(user[5]) > 0:
+        played_games = user[5]
+    statistics_string = "Here are your statistics  📊:\n\nPlayed Games: " + str(played_games) + "\nWon Games : " + str(user[6]) + \
+                        "\nLast Played: " + datetime.fromtimestamp(int(user[8])).strftime('%d.%m.%y %H:%M') + " CET" + \
+                        "\n\n" + get_stats(round(float(user[6]) / float(played_games), 4) * 100) + "\n\nWinning rate: " + \
+                        '{percent:.2%}'.format(percent=float(user[6]) / float(played_games))
     return statistics_string
