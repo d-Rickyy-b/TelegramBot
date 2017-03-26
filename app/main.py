@@ -114,7 +114,8 @@ class Main(object):
                 elif user_id in self.CommentList:
                     self.message_adapter.send_new_message(chat_id, translation("userComment", lang_id), message_id=message_id, keyboard=keyboard_not_running)
                     self.message_adapter.send_new_message(self.DEV_ID,
-                                "Nutzer Kommentar:\n\n" + str(text_orig + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
+                                                          "Nutzer Kommentar:\n\n" + str(
+                                                              text_orig + "\n\n" + str(user_id) + " | " + str(first_name) + " | " + str(last_name) + " | @" + str(username) + " | " + str(lang_id)))
                     self.CommentList.pop(self.CommentList.index(user_id))
 
                 elif not chat_index == -1:
