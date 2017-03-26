@@ -29,9 +29,9 @@ class Main(object):
     message_adapter = MessageSenderAdapter(bot, 0)
 
     keyboard_language = [
-        ["Deutsch 🇩🇪", "English 🇺🇸"],
-        ["Português 🇧🇷", "Русский 🇷🇺", "Nederlands 🇳🇱"],
-        ["Esperanto 🌍", "Español 🇪🇸", "فارسی 🇮🇷"]]
+        ["Deutsch \U0001F1E9\U0001F1EA", "English \U0001F1FA\U0001F1F8"],
+        ["Português \U0001F1E7\U0001F1F7", "Русский \U0001F1F7\U0001F1FA", "Nederlands \U0001F1F3\U0001F1F1"],
+        ["Esperanto \U0001F30D", "Español \U0001F1EA\U0001F1F8", "فارسی \U0001F1EE\U0001F1F7"]]
 
     def add_to_game_list(self, chat_id, user_id, lang_id, game_type, first_name, message_id):
         black_jack_game = BlackJack(chat_id, user_id, lang_id, game_type, first_name, self.game_handler, message_id, self.bot)
