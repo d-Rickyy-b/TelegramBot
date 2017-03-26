@@ -11,6 +11,7 @@ def translation(string, language):
     if language in translations and string in translations[language]:
         return translations[language][string]
     elif language == "br":
+        # TODO remove this part. New users should have pt_BR as lang_id
         return translations["pt_BR"][string]
     elif "en" in translations and string in translations["en"]:
         return translations["en"][string]
