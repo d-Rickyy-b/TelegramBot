@@ -35,7 +35,7 @@ class Player(object):
 
     def get_userid(self):
         return self.user_id
-    
+
     def __init__(self, user_id, first_name, deck):
         db = DBwrapper.get_instance()
         db.insert("lastPlayed", int(time()), user_id)
@@ -44,5 +44,5 @@ class Player(object):
         self.first_name = first_name
         self.cardvalue = 0
         self.has_ace = False
-        self.cards = [] * 0
+        self.cards = []
         self.deck = deck

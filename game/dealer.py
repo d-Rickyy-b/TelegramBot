@@ -10,6 +10,6 @@ class Dealer(Player):
         self.first_name = first_name
         self.cardvalue = 0
         self.has_ace = False
-        self.cards = [] * 0
+        self.cards = []
         self.deck = deck
         self.bet = 0

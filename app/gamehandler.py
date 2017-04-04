@@ -5,7 +5,7 @@ __author__ = 'Rico'
 # get_index_by_chatid returns the index of a running game in the list
 class GameHandler(object):
 
-    GameList = []*0         # List, where the running Games are stored in
+    GameList = []         # List, where the running Games are stored in
 
     def get_index_by_chatid(self, chat_id, i=0):
         for x in self.GameList:
@@ -15,7 +15,7 @@ class GameHandler(object):
         return -1
 
     def gl_create(self):
-        self.GameList = []*0
+        self.GameList = []
 
     def gl_remove(self, chat_id):
         if not self.get_index_by_chatid(chat_id) == -1:
@@ -32,4 +32,4 @@ class GameHandler(object):
         return -1
 
     def __init__(self):
-        self.GameList = []*0
+        self.GameList = []

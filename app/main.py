@@ -19,7 +19,7 @@ from lang.language import translation
 class Main(object):
     BOT_TOKEN = "<your_bot_token_here>"
     bot = TelegramBot(BOT_TOKEN)
-    left_msgs = [[]] * 0
+    left_msgs = []
     offset = 0
     game_handler = GameHandler()
     GameList = game_handler.GameList
