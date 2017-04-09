@@ -202,10 +202,8 @@ class Main(object):
                         except FileNotFoundError:
                             self.message_adapter.send_new_message(chat_id, "I'm sorry, I don't know my IP!")
                     elif text.startswith("!users"):
-                        # message_text = "*Last 24 hours:*\n👥 " + str(get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(get_playing_users(time.time() - 259200))
-                        message_text = "*Last 24 hours:*\n👥 " + str(db.get_playing_users(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(db.get_playing_users(time.time() - 259200))
+                        message_text = "*Last 24 hours:*\n👥 " + str(db.get_playing_users_count(time.time() - 86400)) + "\n\n*Last 3 days:*\n👥 " + str(db.get_playing_users_count(time.time() - 259200))
                         self.message_adapter.send_new_message(chat_id, message_text, parse_mode="Markdown")
-                        # self.message_adapter.send_new_message(chat_id, get_last_players_list())
                     elif text.startswith("!games"):
                         self.message_adapter.send_new_message(chat_id, len(self.game_handler.GameList))
                     elif text.startswith("!admins"):
