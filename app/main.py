@@ -175,7 +175,7 @@ class Main(object):
                             self.message_adapter.send_new_message(self.DEV_ID, "Fehler bei answer")
                             msg_chat_id = self.DEV_ID
                             answer_text = "Fehler"
-                    user_lang_id = str(db.is_user_saved(msg_chat_id)[2])
+                    user_lang_id = str(db.get_lang_id(msg_chat_id))
                     # TODO throws TypeError when answering to the wrong message but doesn't crash
                     self.message_adapter.send_new_message(self.DEV_ID, "Ich habe deine Nachricht an den Nutzer weitergeleitet: \n\n" + answer_text + "\n\n(" + msg_chat_id + ")")
                     self.message_adapter.send_new_message(msg_chat_id, translation("thanksForComment", user_lang_id) + "\n" +
